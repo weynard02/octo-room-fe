@@ -42,7 +42,10 @@ const RegisterPage: React.FC = () => {
       navigate("/dashboard");
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
-      setError(axiosError.response?.data?.message || "Registration failed. Please try again.");
+      setError(
+        axiosError.response?.data?.message ||
+          "Registration failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -51,7 +54,7 @@ const RegisterPage: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center p-6 min-h-screen bg-gray-50">
       <Card
-        className="w-full max-w-md"
+        className="w-full max-w-md animate-fade-in"
         title="Create Account"
         description="Join us today! Please fill in your details."
       >

@@ -37,7 +37,7 @@ const LoginPage: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center p-6 min-h-screen bg-gray-50">
       <Card
-        className="w-full max-w-md"
+        className="w-full max-w-md animate-fade-in"
         title="Login"
         description="Welcome! Please log in to continue."
       >
