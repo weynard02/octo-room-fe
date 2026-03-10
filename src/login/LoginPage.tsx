@@ -3,7 +3,7 @@ import { Button, Input, Card } from "../components";
 
 const LoginPage: React.FC = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+    <div className="flex flex-col items-center justify-center p-6">
       <Card
         className="w-full max-w-md"
         title="Login"

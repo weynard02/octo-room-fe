@@ -3,7 +3,7 @@ import { Button, Card, Input } from '../components';
 
 const MakeAppointmentPage: React.FC = () => {
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
+    <div className="p-4">
       <div className="max-w-2xl mx-auto">
         <Card 
           title="Make an Appointment" 
