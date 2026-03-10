@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, Outlet } from "react-router-dom";
 import {
   LayoutDashboard,
   Settings,
@@ -129,7 +129,7 @@ export const Sidebar = ({ children }: SidebarProps) => {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 overflow-y-auto">{children}</div>
+      <div className="flex-1 overflow-y-auto">{children || <Outlet />}</div>
     </div>
   );
 };
