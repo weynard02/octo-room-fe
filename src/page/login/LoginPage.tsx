@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Input, Card } from "../components";
+import { Button, Input, Card } from "../../components";
 
 const LoginPage: React.FC = () => {
   return (
