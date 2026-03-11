@@ -2,14 +2,14 @@ import api from "./api";
 
 export interface LoginRequest {
   email: string;
-  password?: string;
+  password: string;
 }
 
 export interface RegisterRequest {
   name: string;
   email: string;
   phone: string;
-  password?: string;
+  password: string;
 }
 
 export interface AuthResponse {
