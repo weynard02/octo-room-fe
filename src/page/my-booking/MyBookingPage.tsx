@@ -49,6 +49,7 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
 const BookingCard: React.FC<{ booking: (typeof bookings)[0] }> = ({
   booking,
 }) => {
+  const navigate = useNavigate();
   const room = rooms.find((r) => r.room_id === booking.room_id);
 
   return (
@@ -59,13 +60,35 @@ const BookingCard: React.FC<{ booking: (typeof bookings)[0] }> = ({
           <p className="text-gray-500 text-sm">Date: {booking.date}</p>
           <p className="text-gray-500 text-sm">ID: {booking.booking_id}</p>
         </div>
-        <span
-          className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${
-            statusStyles[booking.status]
-          }`}
-        >
-          {booking.status}
-        </span>
+        <div className="space-y-1 flex flex-col items-center gap-2">
+          <span
+            className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${
+              statusStyles[booking.status]
+            }`}
+          >
+            {booking.status}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() =>
+              navigate(`/my-booking/${booking.booking_id}`, {
+                state: { booking },
+              })
+            }
+          >
+            View Details
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full text-red-600 border-red-400 hover:bg-red-50"
+            onClick={() => alert(`Cancelling booking ${booking.booking_id}`)}
+          >
+            Cancel Booking
+          </Button>
+        </div>
       </div>
     </Card>
   );
