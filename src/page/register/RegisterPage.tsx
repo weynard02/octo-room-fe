@@ -4,11 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button, Input, Card } from "../../components";
 import authService from "../../services/authService";
 
-const LoginPage: React.FC = () => {
+const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,14 +26,25 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     setError(null);
 
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      await authService.login(formData);
+      await authService.register({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+      });
       navigate("/dashboard");
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       setError(
         axiosError.response?.data?.message ||
-          "Login failed. Please check your credentials."
+          "Registration failed. Please try again."
       );
     } finally {
       setLoading(false);
@@ -41,10 +55,10 @@ const LoginPage: React.FC = () => {
     <div className="flex flex-col items-center justify-center p-6 min-h-screen bg-gray-50">
       <Card
         className="w-full max-w-md animate-fade-in"
-        title="Login"
-        description="Welcome! Please log in to continue."
+        title="Create Account"
+        description="Join us today! Please fill in your details."
       >
-        <div className="flex justify-center items-center mb-6">
+        <div className="flex justify-center mb-6">
           <div className="p-4 bg-linear-to-br from-red-600 to-red-800 rounded-md flex items-center justify-center text-xl text-white font-bold">
             OctoRoom
           </div>
@@ -56,7 +70,27 @@ const LoginPage: React.FC = () => {
           </div>
         )}
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <Input
+            label="Full Name"
+            type="text"
+            id="name"
+            name="name"
+            placeholder="John Doe"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            label="Phone Number"
+            type="tel"
+            id="phone"
+            name="phone"
+            placeholder="+62 (555) 123-4567"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
           <Input
             label="Email"
             type="email"
@@ -77,6 +111,16 @@ const LoginPage: React.FC = () => {
             onChange={handleChange}
             required
           />
+          <Input
+            label="Confirm Password"
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="••••••••"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
           <Button
             type="submit"
             fullWidth
@@ -84,18 +128,15 @@ const LoginPage: React.FC = () => {
             className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Creating account..." : "Register"}
           </Button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
-            <Link
-              to="/register"
-              className="text-red-600 font-medium hover:underline"
-            >
-              Sign up
+            Already have an account?{" "}
+            <Link to="/" className="text-red-600 font-medium hover:underline">
+              Log in
             </Link>
           </p>
         </div>
@@ -104,4 +145,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
