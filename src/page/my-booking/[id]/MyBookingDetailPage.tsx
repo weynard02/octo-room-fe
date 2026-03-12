@@ -1,6 +1,8 @@
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { Button, Card } from "../../../components";
 import { bookings, rooms } from "../../../data/mockData";
+import imageHyspace from "../../../assets/images/graha-cimb.png";
+import { statusStyles } from "../MyBookingPage";
 
 export const MyBookingDetailPage: React.FC = () => {
   const { id } = useParams();
@@ -33,9 +35,9 @@ export const MyBookingDetailPage: React.FC = () => {
       </Button>
       <Card className="space-y-4" title="Booking Details">
         <img
-          src="/assets/room1.jpg"
+          src={imageHyspace}
           alt="Room Image"
-          className="w-full h-48 object-cover rounded-lg"
+          className="w-full object-cover rounded-lg"
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -59,7 +61,11 @@ export const MyBookingDetailPage: React.FC = () => {
             </p>
             <p>
               <span className="font-semibold text-gray-600">Status:</span>{" "}
-              <span className="capitalize px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
+              <span
+                className={`capitalize px-2 py-1 bg-blue-100 rounded text-sm ${
+                  statusStyles[booking.status]
+                }`}
+              >
                 {booking.status}
               </span>
             </p>
