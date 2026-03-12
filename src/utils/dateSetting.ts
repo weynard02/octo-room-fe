@@ -7,7 +7,7 @@ const formattedDate = (dateString: string) => {
     year: "numeric",
   };
 
-  return newDate.toLocaleDateString("id-ID", dateConfig);
+  return newDate.toLocaleDateString("en-ID", dateConfig);
 };
 
 export default formattedDate;

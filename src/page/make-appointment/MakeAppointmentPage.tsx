@@ -22,7 +22,7 @@ const MakeAppointmentPage: React.FC = () => {
   const handleOnChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({
@@ -119,7 +119,11 @@ const MakeAppointmentPage: React.FC = () => {
               </div>
 
               <div className="flex justify-end space-x-3 pt-4">
-                <Button type="button" onClick={() => reviewAppointment()}>
+                <Button
+                  type="button"
+                  onClick={() => reviewAppointment()}
+                  className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
+                >
                   Book Room
                 </Button>
               </div>
