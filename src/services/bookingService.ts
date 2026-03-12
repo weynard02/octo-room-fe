@@ -29,7 +29,7 @@ const bookingService = {
    * Requires authentication.
    */
   createBooking: async (data: CreateBookingRequest): Promise<Booking> => {
-    const response = await api.post<Booking>("/bookings", data);
+    const response = await api.post<Booking>("/api/bookings", data);
     return response.data;
   },
 
@@ -45,7 +45,7 @@ const bookingService = {
 
   /**
    * Retrieve details of a specific booking.
-   * GET /api/bookings/:booking_id
+   * GET /bookings/:booking_id
    * Requires authentication.
    */
   getBookingDetail: async (bookingId: string): Promise<Booking> => {
@@ -55,7 +55,7 @@ const bookingService = {
 
   /**
    * Cancel an existing booking.
-   * PATCH /api/bookings/:booking_id/cancel
+   * PATCH /bookings/:booking_id/cancel
    * Requires authentication.
    */
   cancelBooking: async (bookingId: string): Promise<Booking> => {
