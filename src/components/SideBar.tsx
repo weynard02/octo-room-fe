@@ -7,6 +7,7 @@ import {
   ChevronRight,
   LogIn,
   BookCheck,
+  LogOutIcon,
 } from "lucide-react";
 
 const menuItems = [
@@ -121,7 +122,7 @@ export const Sidebar = ({ children }: SidebarProps) => {
                 className="text-gray-400 hover:text-red-600 transition-colors p-1"
                 title="Settings"
               >
-                <Settings size={18} strokeWidth={1.6} />
+                <LogOutIcon size={18} strokeWidth={1.6} />
               </Link>
             )}
           </div>
