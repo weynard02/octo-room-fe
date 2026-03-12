@@ -1,65 +1,203 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Card, Input } from "../../components";
+import type AppointmentType from "../../types/Appointment";
+import formattedDate from "../../utils/dateSetting";
+
+import bookmarkIcon from "../../assets/icons/3d-bookmark.png";
+import imageHyspace from "../../assets/images/graha-cimb.png";
 
 const MakeAppointmentPage: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form, setForm] = useState<AppointmentType>({
+    room: "Large Room",
+    date: "",
+    timeStart: "",
+    timeEnd: "",
+    notes: "",
+  });
+
+  const reviewAppointment = () => {
+    setIsModalOpen(true);
+  };
+  const handleOnChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    console.log(form);
+  };
+
+  const handleSubmit = () => {
+    alert("Submited");
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="p-4">
-      <div className="max-w-2xl mx-auto">
-        <Card
-          title="Make an Appointment"
-          description="Please fill out the form below to book your appointment."
-        >
-          <form className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="md:col-span-2">
-                <label
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                  htmlFor="service"
-                >
-                  Service Type
-                </label>
-                <select
-                  id="service"
-                  name="service"
-                  className="w-full p-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
-                >
-                  <option value="consultation">General Consultation</option>
-                  <option value="followup">Follow-up</option>
-                  <option value="urgent">Urgent Care</option>
-                </select>
+    <>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="max-w-1/3 min-w-1/2">
+          <Card
+            title="Make an Appointment"
+            description="Please fill out the form below to book your appointment."
+            icon={bookmarkIcon}
+          >
+            <form className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                    htmlFor="room"
+                  >
+                    Select Meeting Room
+                  </label>
+                  <div>
+                    <select
+                      id="room"
+                      name="room"
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white appearance-none"
+                      onChange={handleOnChange}
+                    >
+                      <option value="" disabled>
+                        Select Room
+                      </option>
+                      <option value="Large Room">Large Room (6-10 Pax)</option>
+                      <option value="Medium Room">Medium Room (4-6 Pax)</option>
+                      <option value="Small Room">Small Room (2-4 Pax)</option>
+                      <option value="Private Room">
+                        Private Room (1-2 Pax)
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <Input
+                  id="date"
+                  name="date"
+                  label="Select Date"
+                  type="date"
+                  onChange={handleOnChange}
+                />
+                <div className="flex gap-4">
+                  <Input
+                    id="timeStart"
+                    name="timeStart"
+                    label="Start Time"
+                    type="time"
+                    onChange={handleOnChange}
+                  />
+
+                  <Input
+                    id="timeEnd"
+                    name="timeEnd"
+                    label="End Time"
+                    type="time"
+                    onChange={handleOnChange}
+                  />
+                </div>
               </div>
 
-              <Input id="date" name="date" label="Preferred Date" type="date" />
+              <div>
+                <label
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                  htmlFor="notes"
+                >
+                  Additional Notes (Optional)
+                </label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  rows={4}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                  placeholder="Any specific concerns..."
+                  onChange={handleOnChange}
+                ></textarea>
+              </div>
 
-              <Input id="time" name="time" label="Preferred Time" type="time" />
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button
+                  type="button"
+                  onClick={() => reviewAppointment()}
+                  className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
+                >
+                  Book Room
+                </Button>
+              </div>
+            </form>
+          </Card>
+        </div>
+      </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 flex bg-black/60 items-center justify-center content-center">
+          <div className="p-8 bg-white rounded-xl min-w-1/3 max-w-1/2 gap-4 flex flex-col ">
+            <h1 className="font-semibold text-2xl text-black">
+              Review Your Appointment
+            </h1>
+            <div className="w-full h-px bg-blue-100" />
+            <img
+              className="w-full h-48 object-cover rounded-md"
+              src={imageHyspace}
+            />
+            <div className="flex flex-col gap-3">
+              <div>
+                <h3 className="text-2xl text-blue-600">
+                  {form.room ? form.room : "Unselected Room"}
+                </h3>
+              </div>
+              <div className="grid grid-cols-2">
+                <div>
+                  <h3 className="text-sm text-gray-500">Date:</h3>
+                  <h3 className="font-medium text-[16px] w-50">
+                    {formattedDate(form.date)}
+                  </h3>
+                </div>
+                <div>
+                  <h3 className="text-sm text-gray-500">Duration</h3>
+                  <h3 className="font-medium text-[16px]">-</h3>
+                </div>
+              </div>
+              <div className="grid grid-cols-2">
+                <div>
+                  <h3 className="text-sm text-gray-500">Start on:</h3>
+                  <h3 className="font-medium text-[16px] w-1/2">
+                    {form.timeStart ? form.timeStart : "-"}
+                  </h3>
+                </div>
+                <div>
+                  <h3 className="text-sm text-gray-500">End on:</h3>
+                  <h3 className="font-medium text-[16px]">
+                    {form.timeEnd ? form.timeEnd : "-"}
+                  </h3>
+                </div>
+              </div>
+              <div className="">
+                <h3 className="text-sm text-gray-500">Notes:</h3>
+                <h3 className="font-medium text-[16px]">
+                  {form.notes ? form.notes : "-"}
+                </h3>
+              </div>
             </div>
-
-            <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-1"
-                htmlFor="notes"
+            <div className="flex gap-1 justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsModalOpen(false)}
               >
-                Additional Notes (Optional)
-              </label>
-              <textarea
-                id="notes"
-                name="notes"
-                rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                placeholder="Any specific concerns..."
-              ></textarea>
-            </div>
-
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button variant="outline" type="button">
                 Cancel
               </Button>
-              <Button type="submit">Confirm Booking</Button>
+              <Button type="button" onClick={() => handleSubmit()}>
+                Booking
+              </Button>
             </div>
-          </form>
-        </Card>
-      </div>
-    </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
