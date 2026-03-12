@@ -1,49 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Card } from "../../components";
+import { Button, Card, DashboardHeader } from "../../components";
 import { bookings, rooms } from "../../data/mockData";
-import { DateNavigator } from "../../components/DateNavigator";
 import { formatDateKey } from "../../helpers/dataFormatter";
 
 const statusStyles: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800",
   paid: "bg-green-100 text-green-800",
   completed: "bg-blue-100 text-blue-800",
-};
-
-interface HeaderCardProps {
-  bookingCount: number;
-  selectedDate: Date;
-  onDateChange: (date: Date) => void;
-}
-
-const HeaderCard: React.FC<HeaderCardProps> = ({
-  bookingCount,
-  selectedDate,
-  onDateChange,
-}) => {
-  const navigate = useNavigate();
-
-  return (
-    <Card className="w-full p-4">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold mb-2">My Bookings</h1>
-          <p>You currently have {bookingCount} booking(s).</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <DateNavigator date={selectedDate} onChange={onDateChange} />
-          <Button
-            variant="primary"
-            className="bg-red-600 hover:bg-red-700 text-white"
-            onClick={() => navigate("/make-appointment")}
-          >
-            + Make Appointment
-          </Button>
-        </div>
-      </div>
-    </Card>
-  );
 };
 
 const BookingCard: React.FC<{ booking: (typeof bookings)[0] }> = ({
@@ -95,18 +59,17 @@ const BookingCard: React.FC<{ booking: (typeof bookings)[0] }> = ({
 };
 
 export const MyBookingPage: React.FC = () => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
-  const filteredBookings = bookings.filter(
-    (b) => b.date === formatDateKey(selectedDate)
+  const [selectedDate, setSelectedDate] = useState<string>(
+    formatDateKey(new Date())
   );
+
+  const filteredBookings = bookings.filter((b) => b.date === selectedDate);
 
   return (
     <div className="space-y-4">
-      <HeaderCard
-        bookingCount={filteredBookings.length}
+      <DashboardHeader
         selectedDate={selectedDate}
-        onDateChange={setSelectedDate}
+        setSelectedDate={setSelectedDate}
       />
       <div className="w-full p-4 flex flex-col space-y-4 bg-gray-100 rounded-lg">
         {filteredBookings.length === 0 ? (
