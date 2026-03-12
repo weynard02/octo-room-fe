@@ -2,7 +2,7 @@ import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { Button, Card } from "../../../components";
 import { bookings, rooms } from "../../../data/mockData";
 import imageHyspace from "../../../assets/images/graha-cimb.png";
-import { statusStyles } from "../MyBookingPage";
+import { statusStyles } from "../status";
 
 export const MyBookingDetailPage: React.FC = () => {
   const { id } = useParams();
