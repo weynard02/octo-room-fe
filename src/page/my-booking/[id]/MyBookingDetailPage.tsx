@@ -1,17 +1,41 @@
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card } from "../../../components";
-import { bookings, rooms } from "../../../data/mockData";
 import imageHyspace from "../../../assets/images/graha-cimb.png";
 import { statusStyles } from "../status";
+import bookingService, { type Booking } from "../../../services/bookingService";
 
 export const MyBookingDetailPage: React.FC = () => {
   const { id } = useParams();
-  const location = useLocation();
+  // const location = useLocation();
   const navigate = useNavigate();
+  const [booking, setBooking] = useState<Booking | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Get booking from state or find it in mockData
-  const booking =
-    location.state?.booking || bookings.find((b) => b.booking_id === id);
+  useEffect(() => {
+    const fetchBookingDetail = async () => {
+      try {
+        setLoading(true);
+        // Call with bookingId = "room_1" as requested
+        const response = await bookingService.getBookingDetail(id || "room_1");
+        setBooking(response.data);
+      } catch (error) {
+        console.error("Failed to fetch booking detail:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookingDetail();
+  }, []);
+
+  if (loading) {
+    return (
+      <Card title="Loading...">
+        <p>Fetching booking details...</p>
+      </Card>
+    );
+  }
 
   if (!booking) {
     return (
@@ -26,7 +50,7 @@ export const MyBookingDetailPage: React.FC = () => {
     );
   }
 
-  const room = rooms.find((r) => r.room_id === booking.room_id);
+  // const room = rooms.find((r) => r.room_id === booking.room_id);
 
   return (
     <div className="space-y-4">
@@ -47,11 +71,7 @@ export const MyBookingDetailPage: React.FC = () => {
             </p>
             <p>
               <span className="font-semibold text-gray-600">Room Name:</span>{" "}
-              {room?.name || "Unknown Room"}
-            </p>
-            <p>
-              <span className="font-semibold text-gray-600">Floor:</span>{" "}
-              {room?.floor || "N/A"}
+              {booking.room || "Unknown Room"}
             </p>
           </div>
           <div className="space-y-2">
@@ -62,8 +82,8 @@ export const MyBookingDetailPage: React.FC = () => {
             <p>
               <span className="font-semibold text-gray-600">Status:</span>{" "}
               <span
-                className={`capitalize px-2 py-1 bg-blue-100 rounded text-sm ${
-                  statusStyles[booking.status]
+                className={`capitalize px-2 py-1 rounded text-sm ${
+                  statusStyles[booking.status] || "bg-gray-100 text-gray-800"
                 }`}
               >
                 {booking.status}
@@ -73,7 +93,7 @@ export const MyBookingDetailPage: React.FC = () => {
           <div className="space-y-4">
             <Button
               variant="danger"
-              onClick={() => alert(`Cancelling booking ${booking.booking_id}`)}
+              onClick={() => alert(`Cancelling booking ${booking.id}`)}
             >
               Cancel Booking
             </Button>

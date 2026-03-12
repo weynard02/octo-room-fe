@@ -1,12 +1,17 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
-    "ngrok-skip-browser-warning": "true",
   },
 });
+
+export interface ApiResponse<T> {
+  status: string;
+  message: string;
+  data: T;
+}
 
 // Request interceptor for adding auth token and logging
 api.interceptors.request.use(
