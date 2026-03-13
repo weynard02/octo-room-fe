@@ -23,6 +23,10 @@ export const Sidebar = ({ children }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
 
+  const handleLogout = () => {
+    navigation.navigate("/");
+  };
+
   return (
     <div className="flex h-screen bg-gray-50 font-sans">
       {/* Sidebar */}
@@ -116,13 +120,13 @@ export const Sidebar = ({ children }: SidebarProps) => {
               )}
             </div>
             {!collapsed && (
-              <Link
-                to="/settings"
+              <button
                 className="text-gray-400 hover:text-red-600 transition-colors p-1"
-                title="Settings"
+                title="Logout"
+                onClick={handleLogout}
               >
                 <LogOutIcon size={18} strokeWidth={1.6} />
-              </Link>
+              </button>
             )}
           </div>
         </div>

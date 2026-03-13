@@ -4,6 +4,7 @@ import { Button, Card } from "../../../components";
 import imageHyspace from "../../../assets/images/graha-cimb.png";
 import { statusStyles } from "../status";
 import bookingService, { type Booking } from "../../../services/bookingService";
+import emptyBoxIcon from "../../../assets/icons/empty-box.png";
 
 export const MyBookingDetailPage: React.FC = () => {
   const { id } = useParams();
@@ -39,9 +40,12 @@ export const MyBookingDetailPage: React.FC = () => {
 
   if (!booking) {
     return (
-      <Card title="Booking Not Found">
-        <div className="space-y-4">
-          <p>The booking you are looking for does not exist.</p>
+      <Card className="justify-center items-center p-4 h-screen flex">
+        <div className="space-y-8 flex flex-col items-center">
+          <img src={emptyBoxIcon} className="w-64 h-64 opacity-60" />
+          <p className="text-gray-500 text-xl">
+            Oops, seems like your booking is doesnt not exist.
+          </p>
           <Button onClick={() => navigate("/my-booking")}>
             Back to My Bookings
           </Button>
