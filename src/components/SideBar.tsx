@@ -21,6 +21,7 @@ interface SidebarProps {
 export const Sidebar = ({ children }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+
   const user = authService.getUser();
 
   const handleLogout = () => {
@@ -130,13 +131,15 @@ export const Sidebar = ({ children }: SidebarProps) => {
                 </div>
               )}
             </div>
-            <button
-              onClick={handleLogout}
-              className="text-gray-400 hover:text-red-600 transition-colors p-1"
-              title="Logout"
-            >
-              <LogOut size={18} strokeWidth={1.6} />
-            </button>
+            {!collapsed && (
+              <button
+                className="text-gray-400 hover:text-red-600 transition-colors p-1"
+                title="Logout"
+                onClick={handleLogout}
+              >
+                <LogOut size={18} strokeWidth={1.6} />
+              </button>
+            )}
           </div>
         </div>
       </div>
