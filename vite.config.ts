@@ -1,33 +1,24 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  server: {
-    host: true,
-    allowedHosts: ["all"],
-    proxy: {
-      "/api": {
-        target: "https://octo-booking-room-be-production-cf99.up.railway.app",
-        changeOrigin: true,
-        secure: false,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        configure: (proxy, _options) => {
-          proxy.on("proxyRes", (proxyRes, _req, res) => {
-            res.setHeader("Access-Control-Allow-Origin", "*");
-            res.setHeader(
-              "Access-Control-Allow-Methods",
-              "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-            );
-            res.setHeader(
-              "Access-Control-Allow-Headers",
-              "Content-Type, Authorization"
-            );
-          });
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+
+  return {
+    plugins: [react(), tailwindcss()],
+    server: {
+      host: true,
+      allowedHosts: ["all"],
+      proxy: {
+        // Proxy all requests starting with /api to the backend
+        "/api": {
+          target: env.VITE_API_BASE_URL,
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api/, ""),
         },
       },
     },
-  },
+  };
 });
