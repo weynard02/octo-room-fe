@@ -44,7 +44,7 @@ const RegisterPage: React.FC = () => {
       const axiosError = err as AxiosError<{ message: string }>;
       setError(
         axiosError.response?.data?.message ||
-          "Registration failed. Please try again."
+          "Registration failed. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -86,7 +86,7 @@ const RegisterPage: React.FC = () => {
             type="tel"
             id="phone"
             name="phone"
-            placeholder="+62 (555) 123-4567"
+            placeholder="0812345678"
             value={formData.phone}
             onChange={handleChange}
             required
