@@ -96,7 +96,9 @@ export const MyBookingDetailPage: React.FC = () => {
             </p>
             <p>
               <span className="font-semibold text-gray-600">Room Name:</span>{" "}
-              {booking.room || "Unknown Room"}
+              {typeof booking.room === "string"
+                ? booking.room
+                : booking.room?.name || "Unknown Room"}
             </p>
           </div>
           <div className="space-y-2">

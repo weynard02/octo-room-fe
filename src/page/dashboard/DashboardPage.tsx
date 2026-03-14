@@ -18,19 +18,28 @@ export default function DashboardPage() {
       setLoading(true);
       setError(null);
       try {
-        const rooms = await roomService.listRooms();
-        
+        const response = await roomService.listRooms();
+        const rooms = response.data;
+
         // Fetch booked slots for each room in parallel
         const roomsWithData = await Promise.all(
           rooms.map(async (room) => {
             try {
-              const bookedData = await roomService.getBookedSlots(room.id, selectedDate);
+              const bookedResponse = await roomService.getBookedSlots(
+                room.room_id,
+                selectedDate
+              );
               return {
                 ...room,
-                bookings: bookedData.booked_slots,
+                bookings: bookedResponse.data.booked_slots.filter(
+                  (slot) => slot.status?.toLowerCase() !== "cancelled"
+                ),
               };
             } catch (err) {
-              console.error(`Failed to fetch bookings for room ${room.id}:`, err);
+              console.error(
+                `Failed to fetch bookings for room ${room.room_id}:`,
+                err
+              );
               return {
                 ...room,
                 bookings: [],

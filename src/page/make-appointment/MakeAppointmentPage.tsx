@@ -27,8 +27,8 @@ const MakeAppointmentPage: React.FC = () => {
     const fetchRooms = async () => {
       setLoading(true);
       try {
-        const roomList = await roomService.listRooms();
-        setRooms(roomList);
+        const response = await roomService.listRooms();
+        setRooms(response.data);
       } catch (error) {
         console.error("Failed to fetch rooms:", error);
       } finally {
@@ -38,6 +38,26 @@ const MakeAppointmentPage: React.FC = () => {
 
     fetchRooms();
   }, []);
+
+  const calculateDuration = () => {
+    if (!form.timeStart || !form.timeEnd) return "-";
+
+    const [startH, startM] = form.timeStart.split(":").map(Number);
+    const [endH, endM] = form.timeEnd.split(":").map(Number);
+
+    const diffMinutes = endH * 60 + endM - (startH * 60 + startM);
+
+    if (diffMinutes < 0) return "Invalid duration";
+
+    const hours = Math.floor(diffMinutes / 60);
+    const mins = diffMinutes % 60;
+
+    const parts = [];
+    if (hours > 0) parts.push(`${hours} hr${hours > 1 ? "s" : ""}`);
+    if (mins > 0) parts.push(`${mins} min${mins > 1 ? "s" : ""}`);
+
+    return parts.join(" ") || "0 mins";
+  };
 
   const reviewAppointment = () => {
     if (!form.room || !form.date || !form.timeStart || !form.timeEnd) {
@@ -69,7 +89,7 @@ const MakeAppointmentPage: React.FC = () => {
       }
 
       await bookingService.createBooking({
-        room_id: selectedRoom.id,
+        room_id: selectedRoom.room_id,
         date: form.date,
         slots: [
           {
@@ -121,7 +141,7 @@ const MakeAppointmentPage: React.FC = () => {
                         {loading ? "Loading rooms..." : "Select Room"}
                       </option>
                       {rooms.map((room) => (
-                        <option key={room.id} value={room.name}>
+                        <option key={room.room_id} value={room.name}>
                           {room.name} ({room.capacity} Pax)
                         </option>
                       ))}
@@ -216,7 +236,9 @@ const MakeAppointmentPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-sm text-gray-500">Duration</h3>
-                  <h3 className="font-medium text-[16px]">-</h3>
+                  <h3 className="font-medium text-[16px]">
+                    {calculateDuration()}
+                  </h3>
                 </div>
               </div>
               <div className="grid grid-cols-2">

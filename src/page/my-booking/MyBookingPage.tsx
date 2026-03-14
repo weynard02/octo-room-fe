@@ -31,7 +31,12 @@ const BookingCard: React.FC<{
     <Card className="w-full p-4">
       <div className="flex justify-between items-center">
         <div className="space-y-1">
-          <p className="font-semibold">Room: {booking.room}</p>
+          <p className="font-semibold">
+            Room:{" "}
+            {typeof booking.room === "string"
+              ? booking.room
+              : booking.room?.name || "Unknown"}
+          </p>
           <p className="text-gray-500 text-sm">Date: {booking.date}</p>
           <p className="text-gray-500 text-sm">ID: {booking.booking_id}</p>
         </div>
@@ -139,7 +144,7 @@ export const MyBookingPage: React.FC = () => {
           ) : (
             filteredBookings.map((booking) => (
               <BookingCard
-                key={booking.id}
+                key={booking.booking_id}
                 booking={booking}
                 onCancel={handleCancelBooking}
               />

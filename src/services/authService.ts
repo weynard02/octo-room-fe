@@ -1,4 +1,4 @@
-import api from "./api";
+import api, { type ApiResponse } from "./api";
 
 export interface LoginRequest {
   email: string;
@@ -19,25 +19,33 @@ export interface User {
 }
 
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
   user: User;
 }
 
 const authService = {
-  login: async (data: LoginRequest): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>("/auth/login", data);
-    if (response.data.token) {
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+  login: async (data: LoginRequest): Promise<ApiResponse<AuthResponse>> => {
+    const response = await api.post<ApiResponse<AuthResponse>>(
+      "/auth/login",
+      data
+    );
+    if (response.data.data.accessToken) {
+      localStorage.setItem("token", response.data.data.accessToken);
+      localStorage.setItem("user", JSON.stringify(response.data.data.user));
     }
     return response.data;
   },
 
-  register: async (data: RegisterRequest): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>("/auth/register", data);
-    if (response.data.token) {
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+  register: async (
+    data: RegisterRequest
+  ): Promise<ApiResponse<AuthResponse>> => {
+    const response = await api.post<ApiResponse<AuthResponse>>(
+      "/auth/register",
+      data
+    );
+    if (response.data.data.accessToken) {
+      localStorage.setItem("token", response.data.data.accessToken);
+      localStorage.setItem("user", JSON.stringify(response.data.data.user));
     }
     return response.data;
   },
