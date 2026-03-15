@@ -5,9 +5,10 @@ import type { RoomWithBookings } from "../page/dashboard/DashboardPage";
 type BookingGridProps = {
   selectedDate: string;
   roomsWithBookings: RoomWithBookings[];
+  onSlotClick: (room: string, startHour: number) => void;
 };
 
-export function BookingGrid({ roomsWithBookings }: BookingGridProps) {
+export function BookingGrid({ roomsWithBookings, onSlotClick }: BookingGridProps) {
   const getHourIndex = (time: string) =>
     timeSlots.findIndex((t) => t.startsWith(time.split(":")[0]));
 
@@ -31,12 +32,12 @@ export function BookingGrid({ roomsWithBookings }: BookingGridProps) {
       <div className="overflow-x-auto">
         <div
           style={gridStyle}
-          className="min-w-max border-t border-l border-gray-200"
+          className="min-w-max border-t border-gray-200"
         >
           {/* HEADER ROW */}
           <div
             style={{ gridColumn: 1, gridRow: 1 }}
-            className="sticky left-0 z-30 bg-gray-50 flex border-r border-b border-gray-200 items-center justify-center font-bold"
+            className="sticky left-0 z-30 bg-gray-50 flex border-r border-b border-l border-gray-200 items-center justify-center font-bold"
           >
             <Clock size={20} className="text-gray-500" />
           </div>
@@ -56,7 +57,7 @@ export function BookingGrid({ roomsWithBookings }: BookingGridProps) {
             <div
               key={`time-${time}`}
               style={{ gridColumn: 1, gridRow: timeIdx + 2 }}
-              className="sticky left-0 z-10 bg-gray-50 flex border-r border-b border-gray-200 items-center justify-center text-xs font-medium text-gray-500"
+              className="sticky left-0 z-10 bg-gray-50 flex border-r border-b border-l border-gray-200 items-center justify-center text-xs font-medium text-gray-500"
             >
               {time}
             </div>
@@ -68,7 +69,8 @@ export function BookingGrid({ roomsWithBookings }: BookingGridProps) {
               <div
                 key={`empty-${room.room_id}-${timeIdx}`}
                 style={{ gridColumn: roomIdx + 2, gridRow: timeIdx + 2 }}
-                className="border-r border-b border-gray-100"
+                onClick={() => onSlotClick(room.name, 8 + timeIdx)}
+                className="border-r border-b border-gray-100 hover:bg-gray-100 duration-200"
               />
             ))
           )}

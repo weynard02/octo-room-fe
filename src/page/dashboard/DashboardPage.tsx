@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { BookingGrid, DashboardHeader } from "../../components";
 import roomService, { type Room, type BookedSlot } from "../../services/roomService";
 import { formatDateKey } from "../../helpers/dataFormatter";
+import { AppointmentModal } from "../../components/AppointmentModal";
+import type AppointmentType from "../../types/Appointment";
 
 export interface RoomWithBookings extends Room {
   bookings: BookedSlot[];
@@ -12,6 +14,8 @@ export default function DashboardPage() {
   const [roomsWithBookings, setRoomsWithBookings] = useState<RoomWithBookings[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [slotInfo, setSlotInfo] = useState<AppointmentType | null>(null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -47,7 +51,7 @@ export default function DashboardPage() {
             }
           })
         );
-        
+
         setRoomsWithBookings(roomsWithData);
       } catch (err) {
         console.error("Failed to fetch dashboard data:", err);
@@ -60,13 +64,27 @@ export default function DashboardPage() {
     fetchDashboardData();
   }, [selectedDate]);
 
+  function handleSlotClick(room: string, startHour: number,) {
+    const timeStart = `${startHour.toString().padStart(2, "0")}:00`;
+    const timeEnd = `${(startHour + 1).toString().padStart(2, "0")}:00`;
+
+    setSlotInfo({
+      room,
+      date: selectedDate,
+      timeStart,
+      timeEnd
+    });
+
+    setIsModalOpen(true);
+  }
+
   return (
     <div className="p-6">
       <DashboardHeader
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
       />
-      
+
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -79,6 +97,13 @@ export default function DashboardPage() {
         <BookingGrid
           selectedDate={selectedDate}
           roomsWithBookings={roomsWithBookings}
+          onSlotClick={handleSlotClick}
+        />
+      )}
+      {isModalOpen && (
+        <AppointmentModal
+          slotInfo={slotInfo}
+          onClose={() => setIsModalOpen(false)}
         />
       )}
     </div>

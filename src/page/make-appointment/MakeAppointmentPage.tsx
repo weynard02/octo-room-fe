@@ -9,17 +9,22 @@ import { useNavigate } from "react-router-dom";
 import bookmarkIcon from "../../assets/icons/3d-bookmark.png";
 import imageHyspace from "../../assets/images/graha-cimb.png";
 
-const MakeAppointmentPage: React.FC = () => {
+type Props = {
+  formInfo: AppointmentType;
+  onClick: () => void;
+};
+
+const MakeAppointmentPage: React.FC<Props> = ({ formInfo, onClick }) => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState<AppointmentType>({
-    room: "",
-    date: "",
-    timeStart: "",
-    timeEnd: "",
+    room: formInfo.room,
+    date: formInfo.date,
+    timeStart: formInfo.timeStart,
+    timeEnd: formInfo.timeEnd,
     notes: "",
   });
 
@@ -113,7 +118,7 @@ const MakeAppointmentPage: React.FC = () => {
   return (
     <>
       <div className="flex items-center justify-center min-h-screen">
-        <div className="max-w-1/3 min-w-1/2">
+        <div className="min-w-1/2">
           <Card
             title="Make an Appointment"
             description="Please fill out the form below to book your appointment."
@@ -198,11 +203,21 @@ const MakeAppointmentPage: React.FC = () => {
               <div className="flex justify-end space-x-3 pt-4">
                 <Button
                   type="button"
+                  onClick={() => onClick()}
+                  variant="outline"
+                  className="hover:bg-gray-200"
+                >
+                  Cancel
+                </Button>
+
+                <Button
+                  type="button"
                   onClick={() => reviewAppointment()}
                   className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
                 >
                   Book Room
                 </Button>
+
               </div>
             </form>
           </Card>
