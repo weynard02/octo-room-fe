@@ -77,7 +77,12 @@ export function BookingGrid({ roomsWithBookings }: BookingGridProps) {
           {roomsWithBookings.map((room, roomIdx) =>
             room.bookings.map((booking, bIdx) => {
               const startHour = getLocalHour(booking.start_hour);
-              const endHour = getLocalHour(booking.end_hour);
+              let endHour = getLocalHour(booking.end_hour);
+
+              // Handle midnight/24:00 boundary
+              if (endHour === 0 && startHour > 0) {
+                endHour = 24;
+              }
 
               // Find matching time slot index
               const startTimeStr = `${startHour
