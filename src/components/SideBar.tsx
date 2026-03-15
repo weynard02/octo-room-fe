@@ -4,13 +4,12 @@ import {
   LayoutDashboard,
   ChevronLeft,
   ChevronRight,
-  LogIn,
   BookCheck,
-  LogOutIcon,
+  LogOut,
 } from "lucide-react";
+import authService from "../services/authService";
 
 const menuItems = [
-  { icon: LogIn, label: "Login", path: "/" },
   { icon: LayoutDashboard, label: "Home Page", path: "/dashboard" },
   { icon: BookCheck, label: "My Booking", path: "/my-booking" },
 ];
@@ -23,9 +22,22 @@ export const Sidebar = ({ children }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
 
+  const user = authService.getUser();
+
   const handleLogout = () => {
-    navigation.navigate("/");
+    if (window.confirm("Are you sure you want to logout?")) {
+      authService.logout();
+    }
   };
+
+  const initials = user?.name
+    ? user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "??";
 
   return (
     <div className="flex h-screen bg-gray-50 font-sans">
@@ -106,15 +118,15 @@ export const Sidebar = ({ children }: SidebarProps) => {
           >
             <div className="flex items-center gap-[10px]">
               <div className="w-[30px] h-[30px] rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 text-[12px] shrink-0 font-medium">
-                JD
+                {initials}
               </div>
               {!collapsed && (
                 <div className="flex flex-col">
                   <span className="text-gray-800 text-[12px] font-medium leading-none">
-                    Jane Doe
+                    {user?.name || "Anonymous"}
                   </span>
                   <span className="text-gray-500 text-[10px] mt-1 leading-none">
-                    Admin
+                    Member
                   </span>
                 </div>
               )}
@@ -125,7 +137,7 @@ export const Sidebar = ({ children }: SidebarProps) => {
                 title="Logout"
                 onClick={handleLogout}
               >
-                <LogOutIcon size={18} strokeWidth={1.6} />
+                <LogOut size={18} strokeWidth={1.6} />
               </button>
             )}
           </div>
