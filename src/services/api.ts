@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Use the VITE_API_BASE_URL from .env
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api",
   headers: {
     "Content-Type": "application/json",
   },
