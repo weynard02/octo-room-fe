@@ -18,30 +18,28 @@ export interface User {
   name: string;
 }
 
-export interface AuthResponse {
+export interface AuthData {
   accessToken?: string;
   token?: string;
+  access_token?: string;
   user?: User;
-  // If the user object is at the root
   id?: string;
   email?: string;
   name?: string;
 }
 
 const authService = {
-  login: async (data: LoginRequest): Promise<any> => {
-    const response = await api.post("/auth/login", data);
+  login: async (data: LoginRequest): Promise<ApiResponse<AuthData>> => {
+    const response = await api.post<ApiResponse<AuthData>>("/auth/login", data);
     
-    // Check if it's wrapped in { data: ... } or is the response body itself
     const body = response.data;
-    const authData = body.data || body;
+    const authData = body.data || (body as unknown as AuthData);
 
     const token = authData.accessToken || authData.token || authData.access_token;
     if (token) {
       localStorage.setItem("token", token);
     }
 
-    // Try to find the user object
     const user = authData.user || (authData.email ? authData : null);
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -52,11 +50,11 @@ const authService = {
 
   register: async (
     data: RegisterRequest
-  ): Promise<any> => {
-    const response = await api.post("/auth/register", data);
+  ): Promise<ApiResponse<AuthData>> => {
+    const response = await api.post<ApiResponse<AuthData>>("/auth/register", data);
     
     const body = response.data;
-    const authData = body.data || body;
+    const authData = body.data || (body as unknown as AuthData);
 
     const token = authData.accessToken || authData.token || authData.access_token;
     if (token) {
@@ -75,8 +73,7 @@ const authService = {
     const userJson = localStorage.getItem("user");
     if (!userJson || userJson === "undefined" || userJson === "null") return null;
     try {
-      const user = JSON.parse(userJson);
-      // Ensure we return a valid object with at least email or name
+      const user = JSON.parse(userJson) as User;
       if (user && (user.email || user.name)) {
         return user;
       }
