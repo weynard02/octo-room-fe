@@ -1,6 +1,5 @@
 import { Clock } from "lucide-react";
 import { timeSlots } from "../data/mockData";
-import React from "react";
 import type { RoomWithBookings } from "../page/dashboard/DashboardPage";
 
 type BookingGridProps = {
@@ -30,7 +29,10 @@ export function BookingGrid({ roomsWithBookings }: BookingGridProps) {
   return (
     <div className="mt-6 bg-white border border-gray-200 shadow-sm p-4 rounded-xl overflow-hidden">
       <div className="overflow-x-auto">
-        <div style={gridStyle} className="min-w-max border-t border-l border-gray-200">
+        <div
+          style={gridStyle}
+          className="min-w-max border-t border-l border-gray-200"
+        >
           {/* HEADER ROW */}
           <div
             style={{ gridColumn: 1, gridRow: 1 }}
@@ -78,7 +80,9 @@ export function BookingGrid({ roomsWithBookings }: BookingGridProps) {
               const endHour = getLocalHour(booking.end_hour);
 
               // Find matching time slot index
-              const startTimeStr = `${startHour.toString().padStart(2, "0")}:00`;
+              const startTimeStr = `${startHour
+                .toString()
+                .padStart(2, "0")}:00`;
               const startIdx = getHourIndex(startTimeStr);
 
               if (startIdx === -1) return null;
@@ -101,7 +105,8 @@ export function BookingGrid({ roomsWithBookings }: BookingGridProps) {
                       Booked
                     </p>
                     <p className="text-[9px] text-red-600 whitespace-nowrap">
-                      {formatHourString(booking.start_hour)} - {formatHourString(booking.end_hour)}
+                      {formatHourString(booking.start_hour)} -{" "}
+                      {formatHourString(booking.end_hour)}
                     </p>
                   </div>
                 </div>
