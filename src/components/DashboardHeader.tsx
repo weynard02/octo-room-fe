@@ -6,11 +6,13 @@ import formattedDate from "../utils/dateSetting";
 type DashboardHeaderProps = {
   selectedDate: string;
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
+  totalBookings: number;
 };
 
 export function DashboardHeader({
   selectedDate,
   setSelectedDate,
+  totalBookings,
 }: DashboardHeaderProps) {
   const navigate = useNavigate();
   function changeDate(days: number) {
@@ -26,7 +28,8 @@ export function DashboardHeader({
       <div>
         <p className="text-sm text-gray-500">Hello, Good Morning</p>
         <h2 className="font-semibold">
-          You've have <span className="text-[#e11d2e]">0</span> booked room
+          You have <span className="text-[#e11d2e]">{totalBookings}</span> booked{" "}
+          {totalBookings === 1 ? "room" : "rooms"}
         </h2>
       </div>
 

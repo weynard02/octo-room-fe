@@ -19,43 +19,70 @@ export interface User {
 }
 
 export interface AuthResponse {
-  accessToken: string;
-  user: User;
+  accessToken?: string;
+  token?: string;
+  user?: User;
+  // If the user object is at the root
+  id?: string;
+  email?: string;
+  name?: string;
 }
 
 const authService = {
-  login: async (data: LoginRequest): Promise<ApiResponse<AuthResponse>> => {
-    const response = await api.post<ApiResponse<AuthResponse>>(
-      "/auth/login",
-      data
-    );
-    if (response.data.data.accessToken) {
-      localStorage.setItem("token", response.data.data.accessToken);
-      localStorage.setItem("user", JSON.stringify(response.data.data.user));
+  login: async (data: LoginRequest): Promise<any> => {
+    const response = await api.post("/auth/login", data);
+    
+    // Check if it's wrapped in { data: ... } or is the response body itself
+    const body = response.data;
+    const authData = body.data || body;
+
+    const token = authData.accessToken || authData.token || authData.access_token;
+    if (token) {
+      localStorage.setItem("token", token);
     }
-    return response.data;
+
+    // Try to find the user object
+    const user = authData.user || (authData.email ? authData : null);
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+    
+    return body;
   },
 
   register: async (
     data: RegisterRequest
-  ): Promise<ApiResponse<AuthResponse>> => {
-    const response = await api.post<ApiResponse<AuthResponse>>(
-      "/auth/register",
-      data
-    );
-    if (response.data.data.accessToken) {
-      localStorage.setItem("token", response.data.data.accessToken);
-      localStorage.setItem("user", JSON.stringify(response.data.data.user));
+  ): Promise<any> => {
+    const response = await api.post("/auth/register", data);
+    
+    const body = response.data;
+    const authData = body.data || body;
+
+    const token = authData.accessToken || authData.token || authData.access_token;
+    if (token) {
+      localStorage.setItem("token", token);
     }
-    return response.data;
+
+    const user = authData.user || (authData.email ? authData : null);
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+    
+    return body;
   },
 
   getUser: (): User | null => {
     const userJson = localStorage.getItem("user");
-    if (!userJson) return null;
+    if (!userJson || userJson === "undefined" || userJson === "null") return null;
     try {
-      return JSON.parse(userJson);
-    } catch {
+      const user = JSON.parse(userJson);
+      // Ensure we return a valid object with at least email or name
+      if (user && (user.email || user.name)) {
+        return user;
+      }
+      return null;
+    } catch (e) {
+      console.error("Failed to parse user from localStorage", e);
       return null;
     }
   },

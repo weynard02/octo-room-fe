@@ -30,12 +30,13 @@ export const Sidebar = ({ children }: SidebarProps) => {
     }
   };
 
-  const initials = (user?.name || "??")
-    .trim()
-    .split(/\s+/)
-    .map((part: string) => (part[0] ? part[0].toUpperCase() : ""))
-    .join("")
-    .slice(0, 2) || "??";
+  const initials =
+    (user?.name || user?.email || "??")
+      .trim()
+      .split(user?.name ? /\s+/ : /[@._]+/)
+      .map((part: string) => (part[0] ? part[0].toUpperCase() : ""))
+      .join("")
+      .slice(0, 2) || "??";
 
   return (
     <div className="flex h-screen bg-gray-50 font-sans">
@@ -119,9 +120,9 @@ export const Sidebar = ({ children }: SidebarProps) => {
                 {initials}
               </div>
               {!collapsed && (
-                <div className="flex flex-col">
-                  <span className="text-gray-800 text-[12px] font-medium leading-none">
-                    {user?.name || "Anonymous"}
+                <div className="flex flex-col min-w-0">
+                  <span className="text-gray-800 text-[12px] font-medium leading-none truncate">
+                    {user?.email || "Anonymous"}
                   </span>
                   <span className="text-gray-500 text-[10px] mt-1 leading-none">
                     Member
