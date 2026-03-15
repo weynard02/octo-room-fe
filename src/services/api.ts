@@ -1,8 +1,8 @@
 import axios from "axios";
 
-// Use /api to leverage the Vite proxy configured in vite.config.ts
+// Use the VITE_API_BASE_URL from .env
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
