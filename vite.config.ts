@@ -1,23 +1,25 @@
-import { defineConfig, loadEnv } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), "");
-
-  return {
-    plugins: [react(), tailwindcss()],
-    server: {
-      host: true,
-      allowedHosts: ["all"],
-      proxy: {
-        // Proxy all requests starting with /api to the backend
-        "/api": {
-          target: env.VITE_API_BASE_URL,
-          changeOrigin: true,
-          secure: false,
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+  server: {
+    host: true,
+    allowedHosts: ["all"],
+    proxy: {
+      "/api": {
+        target: "https://e626-139-255-102-147.ngrok-free.app",
+        changeOrigin: true,
+        secure: false,
+        headers: {
+          "ngrok-skip-browser-warning": "true",
         },
       },
     },
-  };
-});
+  },
+})

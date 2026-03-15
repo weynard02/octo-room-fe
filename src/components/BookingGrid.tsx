@@ -1,115 +1,139 @@
 import { Clock } from "lucide-react";
-import { timeSlots } from "../data/mockData";
+import { rooms, timeSlots } from "../data/mockData";
+import { getMergedBookings } from "../utils/bookingUtils";
 import React from "react";
-import type { RoomWithBookings } from "../page/dashboard/DashboardPage";
 
 type BookingGridProps = {
-  selectedDate: string;
-  roomsWithBookings: RoomWithBookings[];
-};
+    selectedDate: string
+}
 
-export function BookingGrid({ roomsWithBookings }: BookingGridProps) {
-  const getHourIndex = (time: string) =>
-    timeSlots.findIndex((t) => t.startsWith(time.split(":")[0]));
+export function BookingGrid({ selectedDate }: BookingGridProps) {
 
-  const gridStyle = {
-    display: "grid",
-    gridTemplateColumns: `80px repeat(${roomsWithBookings.length}, minmax(160px, 1fr))`,
-    // +1 for header row
-    gridTemplateRows: `40px repeat(${timeSlots.length}, 40px)`,
-  };
+    const bookings = getMergedBookings(selectedDate);
 
-  function formatHourString(isoString: string) {
-    const date = new Date(isoString);
-    return date.toTimeString().slice(0, 5);
-  }
+    const getHour = (time: string) => Number(time.split(":")[0]);
 
-  // Helper to get local hour from ISO string
-  const getLocalHour = (isoString: string) => new Date(isoString).getHours();
+    const gridStyle = {
+        gridTemplateColumns: `80px repeat(${rooms.length}, minmax(160px,1fr))`,
+        gridTemplateRows: `repeat(${timeSlots.length}, 40px)`
+    };
 
-  return (
-    <div className="mt-6 bg-white border border-gray-200 shadow-sm p-4 rounded-xl overflow-hidden">
-      <div className="overflow-x-auto">
-        <div style={gridStyle} className="min-w-max border-t border-l border-gray-200">
-          {/* HEADER ROW */}
-          <div
-            style={{ gridColumn: 1, gridRow: 1 }}
-            className="sticky left-0 z-30 bg-gray-50 flex border-r border-b border-gray-200 items-center justify-center font-bold"
-          >
-            <Clock size={20} className="text-gray-500" />
-          </div>
+    function getBookingStart(roomId: string, hour: number) {
+        return bookings.find(
+            (b) =>
+                b.room_id === roomId &&
+                b.start.getHours() === hour
+        );
+    }
 
-          {roomsWithBookings.map((room, roomIdx) => (
-            <div
-              key={room.room_id}
-              style={{ gridColumn: roomIdx + 2, gridRow: 1 }}
-              className="sticky top-0 z-20 bg-gray-50 text-center border-r border-b border-gray-200 p-2 text-sm font-semibold text-gray-700"
-            >
-              {room.name}
-            </div>
-          ))}
+    function isCovered(roomId: string, hour: number) {
+        return bookings.find((b) => {
+            const start = b.start.getHours();
+            const end = b.end.getHours();
 
-          {/* TIME COLUMN */}
-          {timeSlots.map((time, timeIdx) => (
-            <div
-              key={`time-${time}`}
-              style={{ gridColumn: 1, gridRow: timeIdx + 2 }}
-              className="sticky left-0 z-10 bg-gray-50 flex border-r border-b border-gray-200 items-center justify-center text-xs font-medium text-gray-500"
-            >
-              {time}
-            </div>
-          ))}
+            return (
+                b.room_id === roomId &&
+                hour > start &&
+                hour < end
+            );
+        });
+    }
 
-          {/* EMPTY GRID CELLS */}
-          {timeSlots.map((_, timeIdx) =>
-            roomsWithBookings.map((room, roomIdx) => (
-              <div
-                key={`empty-${room.room_id}-${timeIdx}`}
-                style={{ gridColumn: roomIdx + 2, gridRow: timeIdx + 2 }}
-                className="border-r border-b border-gray-100"
-              />
-            ))
-          )}
+    function formatHour(date: Date) {
+        return date.toTimeString().slice(0, 5);
+    }
 
-          {/* BOOKING SLOTS (Overlaying the grid) */}
-          {roomsWithBookings.map((room, roomIdx) =>
-            room.bookings.map((booking, bIdx) => {
-              const startHour = getLocalHour(booking.start_hour);
-              const endHour = getLocalHour(booking.end_hour);
+    return (
+        <div className="mt-6 bg-white border border-gray-200 shadow-sm p-4 rounded-xl">
 
-              // Find matching time slot index
-              const startTimeStr = `${startHour.toString().padStart(2, "0")}:00`;
-              const startIdx = getHourIndex(startTimeStr);
+            <div className="overflow-x-auto">
 
-              if (startIdx === -1) return null;
-
-              const duration = endHour - startHour;
-              if (duration <= 0) return null;
-
-              return (
+                {/* HEADER */}
                 <div
-                  key={`booking-${room.room_id}-${bIdx}`}
-                  style={{
-                    gridColumn: roomIdx + 2,
-                    gridRow: `${startIdx + 2} / span ${duration}`,
-                    zIndex: 5,
-                  }}
-                  className="p-1"
+                    className="grid border-b border-t border-gray-200 bg-gray-50"
+                    style={{ gridTemplateColumns: gridStyle.gridTemplateColumns }}
                 >
-                  <div className="h-full bg-red-50 border-l-4 border-red-500 px-2 py-1 rounded-md shadow-sm flex flex-col justify-center overflow-hidden">
-                    <p className="font-bold text-red-700 text-[10px] truncate">
-                      Booked
-                    </p>
-                    <p className="text-[9px] text-red-600 whitespace-nowrap">
-                      {formatHourString(booking.start_hour)} - {formatHourString(booking.end_hour)}
-                    </p>
-                  </div>
+                    <div
+                        className="sticky left-0 z-30 bg-white flex border-r border-l border-gray-200 items-center justify-center "
+                    >
+                        <Clock size={22} />
+                    </div>
+
+                    {rooms.map((room) => (
+                        <div
+                            key={room.room_id}
+                            className="sticky top-0 z-20 bg-white text-center border-r border-gray-200 p-2 text-sm font-medium"
+                        >
+                            {room.name}
+                        </div>
+                    ))}
                 </div>
-              );
-            })
-          )}
+
+                {/* MAIN GRID */}
+                <div
+                    className="grid  border-gray-200"
+                    style={gridStyle}
+                >
+
+                    {timeSlots.map((time) => {
+
+                        const hour = getHour(time);
+
+                        return (
+                            <React.Fragment key={time}>
+
+                                {/* TIME COLUMN */}
+                                <div
+                                    key={`time-${time}`}
+                                    className="sticky left-0 z-10 bg-white flex border-l border-r border-b border-gray-200 items-center justify-center text-sm text-gray-500"
+                                >
+                                    {time}
+                                </div>
+
+                                {rooms.map((room) => {
+
+                                    const bookingStart = getBookingStart(room.room_id, hour);
+
+                                    if (isCovered(room.room_id, hour)) return null;
+
+                                    if (bookingStart) {
+                                        return (
+                                            <div
+                                                key={`${room.room_id}-${time}`}
+                                                className="flex border-b border-r border-gray-100 p-0.5"
+                                                style={{
+                                                    gridRow: `span ${bookingStart.duration}`
+                                                }}
+                                            >
+                                                <div className="bg-red-50 border-l-4 border-red-500 px-2 py-1 rounded-md text-xs flex-auto content-center">
+                                                    <p className="font-medium">
+                                                        {bookingStart.customer_name}
+                                                    </p>
+
+                                                    <p className="text-[10px] text-gray-600">
+                                                        {formatHour(bookingStart.start)} - {formatHour(bookingStart.end)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+
+                                    return (
+                                        <div
+                                            key={`${room.room_id}-${time}`}
+                                            className="h-10 border-r border-b border-gray-200 "
+                                        />
+                                    );
+
+                                })}
+                            </React.Fragment>
+                        );
+
+                    })}
+
+                </div>
+
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
