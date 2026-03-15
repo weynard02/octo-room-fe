@@ -30,7 +30,7 @@ const LoginPage: React.FC = () => {
       const axiosError = err as AxiosError<{ message: string }>;
       setError(
         axiosError.response?.data?.message ||
-          "Login failed. Please check your credentials.",
+          "Login failed. Please check your credentials."
       );
     } finally {
       setLoading(false);

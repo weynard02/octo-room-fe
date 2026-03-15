@@ -1,72 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Card, Input } from "../../components";
 import type AppointmentType from "../../types/Appointment";
 import formattedDate from "../../utils/dateSetting";
-import bookingService from "../../services/bookingService";
-import roomService, { type Room } from "../../services/roomService";
-import { useNavigate } from "react-router-dom";
 
 import bookmarkIcon from "../../assets/icons/3d-bookmark.png";
 import imageHyspace from "../../assets/images/graha-cimb.png";
 
 const MakeAppointmentPage: React.FC = () => {
-  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState<AppointmentType>({
-    room: "",
+    room: "Large Room",
     date: "",
     timeStart: "",
     timeEnd: "",
     notes: "",
   });
 
-  useEffect(() => {
-    const fetchRooms = async () => {
-      setLoading(true);
-      try {
-        const response = await roomService.listRooms();
-        setRooms(response.data);
-      } catch (error) {
-        console.error("Failed to fetch rooms:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRooms();
-  }, []);
-
-  const calculateDuration = () => {
-    if (!form.timeStart || !form.timeEnd) return "-";
-
-    const [startH, startM] = form.timeStart.split(":").map(Number);
-    const [endH, endM] = form.timeEnd.split(":").map(Number);
-
-    const diffMinutes = endH * 60 + endM - (startH * 60 + startM);
-
-    if (diffMinutes < 0) return "Invalid duration";
-
-    const hours = Math.floor(diffMinutes / 60);
-    const mins = diffMinutes % 60;
-
-    const parts = [];
-    if (hours > 0) parts.push(`${hours} hr${hours > 1 ? "s" : ""}`);
-    if (mins > 0) parts.push(`${mins} min${mins > 1 ? "s" : ""}`);
-
-    return parts.join(" ") || "0 mins";
-  };
-
   const reviewAppointment = () => {
-    if (!form.room || !form.date || !form.timeStart || !form.timeEnd) {
-      alert("Please fill in all required fields.");
-      return;
-    }
     setIsModalOpen(true);
   };
-
   const handleOnChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -77,37 +29,13 @@ const MakeAppointmentPage: React.FC = () => {
       ...prev,
       [name]: value,
     }));
+
+    console.log(form);
   };
 
-  const handleSubmit = async () => {
-    setSubmitting(true);
-    try {
-      const selectedRoom = rooms.find((r) => r.name === form.room);
-      if (!selectedRoom) {
-        alert("Invalid room selected.");
-        return;
-      }
-
-      await bookingService.createBooking({
-        room_id: selectedRoom.room_id,
-        date: form.date,
-        slots: [
-          {
-            start_hour: `${form.date}T${form.timeStart}:00`,
-            end_hour: `${form.date}T${form.timeEnd}:00`,
-          },
-        ],
-      });
-
-      alert("Booking successful!");
-      setIsModalOpen(false);
-      navigate("/my-booking");
-    } catch (error) {
-      console.error("Booking failed:", error);
-      alert("Failed to create booking. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
+  const handleSubmit = () => {
+    alert("Submited");
+    setIsModalOpen(false);
   };
 
   return (
@@ -132,19 +60,18 @@ const MakeAppointmentPage: React.FC = () => {
                     <select
                       id="room"
                       name="room"
-                      value={form.room}
                       className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white appearance-none"
                       onChange={handleOnChange}
-                      disabled={loading}
                     >
                       <option value="" disabled>
-                        {loading ? "Loading rooms..." : "Select Room"}
+                        Select Room
                       </option>
-                      {rooms.map((room) => (
-                        <option key={room.room_id} value={room.name}>
-                          {room.name} ({room.capacity} Pax)
-                        </option>
-                      ))}
+                      <option value="Large Room">Large Room (6-10 Pax)</option>
+                      <option value="Medium Room">Medium Room (4-6 Pax)</option>
+                      <option value="Small Room">Small Room (2-4 Pax)</option>
+                      <option value="Private Room">
+                        Private Room (1-2 Pax)
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -153,7 +80,6 @@ const MakeAppointmentPage: React.FC = () => {
                   name="date"
                   label="Select Date"
                   type="date"
-                  value={form.date}
                   onChange={handleOnChange}
                 />
                 <div className="flex gap-4">
@@ -162,7 +88,6 @@ const MakeAppointmentPage: React.FC = () => {
                     name="timeStart"
                     label="Start Time"
                     type="time"
-                    value={form.timeStart}
                     onChange={handleOnChange}
                   />
 
@@ -171,7 +96,6 @@ const MakeAppointmentPage: React.FC = () => {
                     name="timeEnd"
                     label="End Time"
                     type="time"
-                    value={form.timeEnd}
                     onChange={handleOnChange}
                   />
                 </div>
@@ -188,7 +112,6 @@ const MakeAppointmentPage: React.FC = () => {
                   id="notes"
                   name="notes"
                   rows={4}
-                  value={form.notes}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                   placeholder="Any specific concerns..."
                   onChange={handleOnChange}
@@ -210,7 +133,7 @@ const MakeAppointmentPage: React.FC = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 flex bg-black/60 items-center justify-center content-center z-50">
+        <div className="fixed inset-0 flex bg-black/60 items-center justify-center content-center">
           <div className="p-8 bg-white rounded-xl min-w-1/3 max-w-1/2 gap-4 flex flex-col ">
             <h1 className="font-semibold text-2xl text-black">
               Review Your Appointment
@@ -219,7 +142,6 @@ const MakeAppointmentPage: React.FC = () => {
             <img
               className="w-full h-48 object-cover rounded-md"
               src={imageHyspace}
-              alt="Room"
             />
             <div className="flex flex-col gap-3">
               <div>
@@ -236,9 +158,7 @@ const MakeAppointmentPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-sm text-gray-500">Duration</h3>
-                  <h3 className="font-medium text-[16px]">
-                    {calculateDuration()}
-                  </h3>
+                  <h3 className="font-medium text-[16px]">-</h3>
                 </div>
               </div>
               <div className="grid grid-cols-2">
@@ -267,16 +187,11 @@ const MakeAppointmentPage: React.FC = () => {
                 type="button"
                 variant="outline"
                 onClick={() => setIsModalOpen(false)}
-                disabled={submitting}
               >
                 Cancel
               </Button>
-              <Button
-                type="button"
-                onClick={() => handleSubmit()}
-                disabled={submitting}
-              >
-                {submitting ? "Booking..." : "Booking"}
+              <Button type="button" onClick={() => handleSubmit()}>
+                Booking
               </Button>
             </div>
           </div>

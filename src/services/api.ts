@@ -1,8 +1,7 @@
 import axios from "axios";
 
-// Using /api will hit the proxy we just set up in vite.config.ts
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -23,14 +22,14 @@ api.interceptors.request.use(
     }
     console.log(
       `[API Request] ${config.method?.toUpperCase()} ${config.url}`,
-      config.data || "",
+      config.data || ""
     );
     return config;
   },
   (error) => {
     console.error("[API Request Error]", error);
     return Promise.reject(error);
-  },
+  }
 );
 
 // Response interceptor for handling errors and logging
@@ -38,14 +37,14 @@ api.interceptors.response.use(
   (response) => {
     console.log(
       `[API Response] ${response.status} ${response.config.url}`,
-      response.data,
+      response.data
     );
     return response;
   },
   (error) => {
     console.error(
       `[API Response Error] ${error.response?.status} ${error.config?.url}`,
-      error.response?.data || error.message,
+      error.response?.data || error.message
     );
     if (error.response && error.response.status === 401) {
       // Handle unauthorized (e.g., redirect to login)
@@ -53,7 +52,7 @@ api.interceptors.response.use(
       window.location.href = "/";
     }
     return Promise.reject(error);
-  },
+  }
 );
 
 export default api;
