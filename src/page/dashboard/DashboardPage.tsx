@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BookingGrid, DashboardHeader } from "../../components";
 import roomService, { type Room, type BookedSlot } from "../../services/roomService";
 import { formatDateKey } from "../../helpers/dataFormatter";
 import { AppointmentModal } from "../../components/AppointmentModal";
 import type AppointmentType from "../../types/Appointment";
+import { BookingDetailModal } from "../../components/BookingDetailModal";
 
 export interface RoomWithBookings extends Room {
   bookings: BookedSlot[];
@@ -16,6 +17,8 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [slotInfo, setSlotInfo] = useState<AppointmentType | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<BookedSlot | null>(null);
+  const [isBookingDetailOpen, setIsBookingDetailOpen] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -78,6 +81,11 @@ export default function DashboardPage() {
     setIsModalOpen(true);
   }
 
+  function handleBookingClick(booking: BookedSlot) {
+    setSelectedBooking(booking);
+    setIsBookingDetailOpen(true);
+  };
+
   return (
     <div className="p-6">
       <DashboardHeader
@@ -98,12 +106,19 @@ export default function DashboardPage() {
           selectedDate={selectedDate}
           roomsWithBookings={roomsWithBookings}
           onSlotClick={handleSlotClick}
+          onBookingClick={handleBookingClick}
         />
       )}
       {isModalOpen && (
         <AppointmentModal
           slotInfo={slotInfo}
           onClose={() => setIsModalOpen(false)}
+        />
+      )}
+      {selectedBooking && (
+        <BookingDetailModal
+          booking={selectedBooking}
+          onClose={() => setSelectedBooking(null)}
         />
       )}
     </div>

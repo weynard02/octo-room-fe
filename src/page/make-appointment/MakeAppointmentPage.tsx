@@ -8,13 +8,14 @@ import { useNavigate } from "react-router-dom";
 
 import bookmarkIcon from "../../assets/icons/3d-bookmark.png";
 import imageHyspace from "../../assets/images/graha-cimb.png";
+import { initialAppointment } from "../../types/Appointment";
 
 type Props = {
   formInfo: AppointmentType;
   onClick: () => void;
 };
 
-const MakeAppointmentPage: React.FC<Props> = ({ formInfo, onClick }) => {
+const MakeAppointmentPage: React.FC<Props> = ({ formInfo = initialAppointment, onClick = () => { } }) => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
