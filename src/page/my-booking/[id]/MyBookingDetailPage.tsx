@@ -82,7 +82,7 @@ export const MyBookingDetailPage: React.FC = () => {
     if (!booking) return;
     showConfirm(
       "Cancel Booking",
-      `Are you sure you want to cancel booking ${booking.booking_id}?`,
+      `Are you sure you want to cancel this booking?`,
       "Cancel Booking",
       handleCancelAction
     );
