@@ -157,7 +157,7 @@ const MakeAppointmentPage: React.FC<Props> = ({
                       </option>
                       {rooms.map((room) => (
                         <option key={room.room_id} value={room.name}>
-                          {room.name} ({room.capacity} Pax)
+                          {room.name} ({room.room_type.capacity} Pax)
                         </option>
                       ))}
                     </select>

@@ -3,9 +3,13 @@ import api, { type ApiResponse } from "./api";
 export interface Room {
   room_id: string;
   name: string;
+  room_type: RoomType;
+}
+
+export interface RoomType {
+  type_id: string;
+  name: string;
   capacity: number;
-  location?: string;
-  facilities?: string[];
 }
 
 export interface BookedSlot {
