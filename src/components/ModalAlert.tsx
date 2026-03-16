@@ -22,7 +22,7 @@ export const ModalAlert = ({
         </div>
         <div className="flex gap-3 justify-center">
           <Button
-            variant={onConfirm ? "outline" : "primary"}
+            variant={onConfirm ? "outline" : "danger"}
             onClick={onClose}
             className="w-full"
           >
