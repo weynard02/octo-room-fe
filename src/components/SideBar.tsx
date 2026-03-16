@@ -133,7 +133,7 @@ export const Sidebar = ({ children }: SidebarProps) => {
               {!collapsed && (
                 <div className="flex flex-col min-w-0">
                   <span className="text-gray-800 text-[12px] font-medium leading-none truncate">
-                    {user?.email || "Anonymous"}
+                    {user?.name || "Anonymous"}
                   </span>
                   <span className="text-gray-500 text-[10px] mt-1 leading-none">
                     Member

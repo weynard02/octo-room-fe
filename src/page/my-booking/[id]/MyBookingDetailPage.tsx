@@ -9,6 +9,7 @@ import {
   type ModalAlertState,
   initialModalAlertState,
 } from "../../../types/ModalState";
+import formattedDate from "../../../utils/dateSetting";
 
 export const MyBookingDetailPage: React.FC = () => {
   const { id } = useParams();
@@ -138,10 +139,6 @@ export const MyBookingDetailPage: React.FC = () => {
           </div>
           <div className="space-y-2">
             <p>
-              <span className="font-semibold text-gray-600">Date:</span>{" "}
-              {booking.date}
-            </p>
-            <p>
               <span className="font-semibold text-gray-600">Status:</span>{" "}
               <span
                 className={`capitalize px-2 py-1 rounded text-sm font-medium ${
@@ -150,6 +147,17 @@ export const MyBookingDetailPage: React.FC = () => {
               >
                 {booking.status}
               </span>
+            </p>
+          </div>
+          <div className="space-y-2">
+            <p>
+              <span className="font-semibold text-gray-600">Date:</span>{" "}
+              {formattedDate(booking.date)}
+            </p>
+            <p>
+              <span className="font-semibold text-gray-600">Time:</span>{" "}
+              {booking.slots?.[0]?.start_hour || "N/A"} -{" "}
+              {booking.slots?.[0]?.end_hour || "N/A"}
             </p>
           </div>
         </div>

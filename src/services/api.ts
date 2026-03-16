@@ -21,14 +21,14 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    // console.log(
-    //   `[API Request] ${config.method?.toUpperCase()} ${config.url}`,
-    //   config.data || "",
-    // );
+    console.log(
+      `[API Request] ${config.method?.toUpperCase()} ${config.url}`,
+      config.data || ""
+    );
     return config;
   },
   (error) => {
-    // console.error("[API Request Error]", error);
+    console.error("[API Request Error]", error);
     return Promise.reject(error);
   }
 );
@@ -43,10 +43,10 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    // console.error(
-    //   `[API Response Error] ${error.response?.status} ${error.config?.url}`,
-    //   error.response?.data || error.message,
-    // );
+    console.error(
+      `[API Response Error] ${error.response?.status} ${error.config?.url}`,
+      error.response?.data || error.message
+    );
     if (error.response && error.response.status === 401) {
       // Handle unauthorized (e.g., redirect to login)
       localStorage.removeItem("token");

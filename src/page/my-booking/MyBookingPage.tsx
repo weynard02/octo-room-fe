@@ -8,6 +8,7 @@ import {
   type ModalAlertState,
   initialModalAlertState,
 } from "../../types/ModalState";
+import formattedDate from "../../utils/dateSetting";
 
 const BookingCard: React.FC<{
   booking: Booking;
@@ -25,7 +26,14 @@ const BookingCard: React.FC<{
               ? booking.room
               : booking.room?.name || "Unknown"}
           </p>
-          <p className="text-gray-500 text-sm">Date: {booking.date}</p>
+          <p className="text-gray-500 text-sm">
+            Date: {formattedDate(booking.date)}{" "}
+          </p>
+          <p className="text-gray-500 text-sm">
+            Time: {""}
+            {booking.slots?.[0]?.start_hour || "N/A"} -{" "}
+            {booking.slots?.[0]?.end_hour || "N/A"}
+          </p>
         </div>
         <div className="space-y-1 flex flex-col items-center gap-2">
           <span
