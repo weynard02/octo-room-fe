@@ -83,7 +83,7 @@ const authService = {
       }
       return null;
     } catch (e) {
-      // console.error("Failed to parse user from localStorage", e);
+      console.error("Failed to parse user from localStorage", e);
       return null;
     }
   },
