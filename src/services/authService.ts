@@ -18,44 +18,68 @@ export interface User {
   name: string;
 }
 
-export interface AuthResponse {
-  accessToken: string;
-  user: User;
+export interface AuthData {
+  accessToken?: string;
+  token?: string;
+  access_token?: string;
+  user?: User;
+  id?: string;
+  email?: string;
+  name?: string;
 }
 
 const authService = {
-  login: async (data: LoginRequest): Promise<ApiResponse<AuthResponse>> => {
-    const response = await api.post<ApiResponse<AuthResponse>>(
-      "/auth/login",
-      data
-    );
-    if (response.data.data.accessToken) {
-      localStorage.setItem("token", response.data.data.accessToken);
-      localStorage.setItem("user", JSON.stringify(response.data.data.user));
+  login: async (data: LoginRequest): Promise<ApiResponse<AuthData>> => {
+    const response = await api.post<ApiResponse<AuthData>>("/auth/login", data);
+    
+    const body = response.data;
+    const authData = body.data || (body as unknown as AuthData);
+
+    const token = authData.accessToken || authData.token || authData.access_token;
+    if (token) {
+      localStorage.setItem("token", token);
     }
-    return response.data;
+
+    const user = authData.user || (authData.email ? authData : null);
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+    
+    return body;
   },
 
   register: async (
     data: RegisterRequest
-  ): Promise<ApiResponse<AuthResponse>> => {
-    const response = await api.post<ApiResponse<AuthResponse>>(
-      "/auth/register",
-      data
-    );
-    if (response.data.data.accessToken) {
-      localStorage.setItem("token", response.data.data.accessToken);
-      localStorage.setItem("user", JSON.stringify(response.data.data.user));
+  ): Promise<ApiResponse<AuthData>> => {
+    const response = await api.post<ApiResponse<AuthData>>("/auth/register", data);
+    
+    const body = response.data;
+    const authData = body.data || (body as unknown as AuthData);
+
+    const token = authData.accessToken || authData.token || authData.access_token;
+    if (token) {
+      localStorage.setItem("token", token);
     }
-    return response.data;
+
+    const user = authData.user || (authData.email ? authData : null);
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+    
+    return body;
   },
 
   getUser: (): User | null => {
     const userJson = localStorage.getItem("user");
-    if (!userJson) return null;
+    if (!userJson || userJson === "undefined" || userJson === "null") return null;
     try {
-      return JSON.parse(userJson);
-    } catch {
+      const user = JSON.parse(userJson) as User;
+      if (user && (user.email || user.name)) {
+        return user;
+      }
+      return null;
+    } catch (e) {
+      console.error("Failed to parse user from localStorage", e);
       return null;
     }
   },

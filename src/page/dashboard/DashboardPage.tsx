@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BookingGrid, DashboardHeader } from "../../components";
 import roomService, { type Room, type BookedSlot } from "../../services/roomService";
+import bookingService from "../../services/bookingService";
 import { formatDateKey } from "../../helpers/dataFormatter";
 import { AppointmentModal } from "../../components/AppointmentModal";
 import type AppointmentType from "../../types/Appointment";
@@ -13,6 +14,7 @@ export interface RoomWithBookings extends Room {
 export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState(formatDateKey(new Date()));
   const [roomsWithBookings, setRoomsWithBookings] = useState<RoomWithBookings[]>([]);
+  const [totalBookings, setTotalBookings] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,8 +27,13 @@ export default function DashboardPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await roomService.listRooms();
-        const rooms = response.data;
+        const [roomsResponse, myBookingsResponse] = await Promise.all([
+          roomService.listRooms(),
+          bookingService.getMyBookings(),
+        ]);
+        
+        const rooms = roomsResponse.data;
+        setTotalBookings(myBookingsResponse.data?.length || 0);
 
         // Fetch booked slots for each room in parallel
         const roomsWithData = await Promise.all(
@@ -91,6 +98,7 @@ export default function DashboardPage() {
       <DashboardHeader
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
+        totalBookings={totalBookings}
       />
 
       {loading ? (

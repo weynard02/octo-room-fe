@@ -122,6 +122,7 @@ export const MyBookingPage: React.FC = () => {
       <DashboardHeader
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
+        totalBookings={allBookings.length}
       />
 
       {loading ? (

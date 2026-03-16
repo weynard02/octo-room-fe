@@ -49,7 +49,12 @@ const MakeAppointmentPage: React.FC<Props> = ({ formInfo = initialAppointment, o
     if (!form.timeStart || !form.timeEnd) return "-";
 
     const [startH, startM] = form.timeStart.split(":").map(Number);
-    const [endH, endM] = form.timeEnd.split(":").map(Number);
+    let [endH, endM] = form.timeEnd.split(":").map(Number);
+
+    // Handle midnight as 24:00 if it's after start time
+    if (endH === 0 && endM === 0 && (startH > 0 || startM > 0)) {
+      endH = 24;
+    }
 
     const diffMinutes = endH * 60 + endM - (startH * 60 + startM);
 

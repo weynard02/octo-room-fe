@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, process.cwd(), "");
 
-  const apiTarget = env.VITE_API_BASE_URL || "http://localhost:3000/api";
+  const apiTarget = env.VITE_API_BASE_URL || "";
 
   return {
     plugins: [react(), tailwindcss()],
@@ -21,6 +21,13 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, ""),
+          // If apiTarget is not set, we should warn
+          bypass: () => {
+            if (!apiTarget) {
+              console.warn("VITE_API_BASE_URL is not defined in .env! API requests will fail.");
+              return;
+            }
+          }
         },
       },
     },

@@ -1,12 +1,9 @@
+import api from "./api";
 import type AppointmentType from "../types/Appointment";
 
 export const createAppointment = async (data: AppointmentType) => {
-  const res = await fetch("/api/bookings", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  const result = res.json();
+  const response = await api.post("/bookings", data);
+  const result = response.data;
 
   console.log("data", result);
 
