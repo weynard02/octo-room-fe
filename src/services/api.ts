@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// Use the VITE_API_BASE_URL from .env
+// Using /api will hit the proxy we just set up in vite.config.ts
 const api = axios.create({
   baseURL: "/api",
   headers: {
@@ -28,9 +28,9 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    // console.error("[API Request Error]", error);
+    console.error("[API Request Error]", error);
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor for handling errors and logging
@@ -53,7 +53,7 @@ api.interceptors.response.use(
       // window.location.href = "/";
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
