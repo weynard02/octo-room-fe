@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BookingGrid, DashboardHeader } from "../../components";
-import roomService, { type Room, type BookedSlot } from "../../services/roomService";
+import roomService, {
+  type Room,
+  type BookedSlot,
+} from "../../services/roomService";
 import bookingService from "../../services/bookingService";
 import { formatDateKey } from "../../helpers/dataFormatter";
 import { AppointmentModal } from "../../components/AppointmentModal";
 import type AppointmentType from "../../types/Appointment";
-import { BookingDetailModal } from "../../components/BookingDetailModal";
 
 export interface RoomWithBookings extends Room {
   bookings: BookedSlot[];
@@ -13,14 +15,14 @@ export interface RoomWithBookings extends Room {
 
 export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState(formatDateKey(new Date()));
-  const [roomsWithBookings, setRoomsWithBookings] = useState<RoomWithBookings[]>([]);
+  const [roomsWithBookings, setRoomsWithBookings] = useState<
+    RoomWithBookings[]
+  >([]);
   const [totalBookings, setTotalBookings] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [slotInfo, setSlotInfo] = useState<AppointmentType | null>(null);
-  const [selectedBooking, setSelectedBooking] = useState<BookedSlot | null>(null);
-  const [isBookingDetailOpen, setIsBookingDetailOpen] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -31,7 +33,7 @@ export default function DashboardPage() {
           roomService.listRooms(),
           bookingService.getMyBookings(),
         ]);
-        
+
         const rooms = roomsResponse.data;
         setTotalBookings(myBookingsResponse.data?.length || 0);
 
@@ -74,7 +76,7 @@ export default function DashboardPage() {
     fetchDashboardData();
   }, [selectedDate]);
 
-  function handleSlotClick(room: string, startHour: number,) {
+  function handleSlotClick(room: string, startHour: number) {
     const timeStart = `${startHour.toString().padStart(2, "0")}:00`;
     const timeEnd = `${(startHour + 1).toString().padStart(2, "0")}:00`;
 
@@ -82,16 +84,11 @@ export default function DashboardPage() {
       room,
       date: selectedDate,
       timeStart,
-      timeEnd
+      timeEnd,
     });
 
     setIsModalOpen(true);
   }
-
-  function handleBookingClick(booking: BookedSlot) {
-    setSelectedBooking(booking);
-    setIsBookingDetailOpen(true);
-  };
 
   return (
     <div className="p-6">
@@ -114,19 +111,12 @@ export default function DashboardPage() {
           selectedDate={selectedDate}
           roomsWithBookings={roomsWithBookings}
           onSlotClick={handleSlotClick}
-          onBookingClick={handleBookingClick}
         />
       )}
       {isModalOpen && (
         <AppointmentModal
           slotInfo={slotInfo}
           onClose={() => setIsModalOpen(false)}
-        />
-      )}
-      {selectedBooking && (
-        <BookingDetailModal
-          booking={selectedBooking}
-          onClose={() => setSelectedBooking(null)}
         />
       )}
     </div>
