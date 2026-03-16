@@ -5,3 +5,11 @@ export default interface AppointmentType {
   timeEnd: string;
   notes?: string;
 }
+
+export const initialAppointment: AppointmentType = {
+  room: "",
+  date: '',
+  timeStart: '',
+  timeEnd: '',
+  notes: ''
+}
