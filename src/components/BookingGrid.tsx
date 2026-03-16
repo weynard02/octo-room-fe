@@ -69,7 +69,7 @@ export function BookingGrid({
               <div
                 key={`empty-${room.room_id}-${timeIdx}`}
                 style={{ gridColumn: roomIdx + 2, gridRow: timeIdx + 2 }}
-                onClick={() => onSlotClick(room.name, 8 + timeIdx)}
+                onClick={() => onSlotClick(room.name, 7 + timeIdx)}
                 className="border-r border-b border-gray-100 hover:bg-gray-100 duration-200"
               />
             ))
