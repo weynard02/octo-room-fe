@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Card } from "../../../components";
+import { Button, Card, ModalAlert } from "../../../components";
 import imageHyspace from "../../../assets/images/graha-cimb.png";
 import { statusStyles } from "../status";
 import bookingService, { type Booking } from "../../../services/bookingService";
 import emptyBoxIcon from "../../../assets/icons/empty-box.png";
+import {
+  type ModalAlertState,
+  initialModalAlertState,
+} from "../../../types/ModalState";
 
 export const MyBookingDetailPage: React.FC = () => {
   const { id } = useParams();
@@ -12,6 +16,34 @@ export const MyBookingDetailPage: React.FC = () => {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
+
+  const [modal, setModal] = useState<ModalAlertState>(initialModalAlertState);
+
+  const showAlert = (title: string, message: string) => {
+    setModal({
+      ...initialModalAlertState,
+      show: true,
+      title,
+      message,
+      onClose: () => setModal(initialModalAlertState),
+    });
+  };
+
+  const showConfirm = (
+    title: string,
+    message: string,
+    confirmLabel: string,
+    onConfirm: () => void
+  ) => {
+    setModal({
+      show: true,
+      title,
+      message,
+      confirmLabel,
+      onConfirm,
+      onClose: () => setModal(initialModalAlertState),
+    });
+  };
 
   const fetchBookingDetail = useCallback(async () => {
     try {
@@ -31,26 +63,29 @@ export const MyBookingDetailPage: React.FC = () => {
     }
   }, [id, fetchBookingDetail]);
 
-  const handleCancel = async () => {
+  const handleCancelAction = async () => {
     if (!booking) return;
-
-    if (
-      window.confirm(
-        `Are you sure you want to cancel booking ${booking.booking_id}?`
-      )
-    ) {
-      setCancelling(true);
-      try {
-        await bookingService.cancelBooking(booking.booking_id);
-        alert("Booking cancelled successfully.");
-        await fetchBookingDetail(); // Refresh data
-      } catch (error) {
-        console.error("Failed to cancel booking:", error);
-        alert("Failed to cancel booking. Please try again.");
-      } finally {
-        setCancelling(false);
-      }
+    setCancelling(true);
+    try {
+      await bookingService.cancelBooking(booking.booking_id);
+      showAlert("Success", "Booking cancelled successfully.");
+      await fetchBookingDetail(); // Refresh data
+    } catch (error) {
+      console.error("Failed to cancel booking:", error);
+      showAlert("Error", "Failed to cancel booking. Please try again.");
+    } finally {
+      setCancelling(false);
     }
+  };
+
+  const handleCancel = () => {
+    if (!booking) return;
+    showConfirm(
+      "Cancel Booking",
+      `Are you sure you want to cancel this booking?`,
+      "Cancel Booking",
+      handleCancelAction
+    );
   };
 
   if (loading) {
@@ -86,7 +121,7 @@ export const MyBookingDetailPage: React.FC = () => {
         <img
           src={imageHyspace}
           alt="Room Image"
-          className="w-full h-64 object-cover rounded-lg"
+          className="w-full h-64 object-cover rounded-lg mb-4"
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -132,6 +167,16 @@ export const MyBookingDetailPage: React.FC = () => {
           </div>
         )}
       </Card>
+
+      {modal.show && (
+        <ModalAlert
+          title={modal.title}
+          message={modal.message}
+          confirmLabel={modal.confirmLabel}
+          onConfirm={modal.onConfirm}
+          onClose={modal.onClose || (() => setModal(initialModalAlertState))}
+        />
+      )}
     </div>
   );
 };

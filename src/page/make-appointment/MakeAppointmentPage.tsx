@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Input } from "../../components";
+import { Button, Card, Input, ModalAlert } from "../../components";
 import type AppointmentType from "../../types/Appointment";
 import formattedDate from "../../utils/dateSetting";
 import bookingService from "../../services/bookingService";
@@ -9,6 +9,10 @@ import { useNavigate } from "react-router-dom";
 import bookmarkIcon from "../../assets/icons/3d-bookmark.png";
 import imageHyspace from "../../assets/images/graha-cimb.png";
 import { initialAppointment } from "../../types/Appointment";
+import {
+  type ModalAlertState,
+  initialModalAlertState,
+} from "../../types/ModalState";
 
 type Props = {
   formInfo: AppointmentType;
@@ -31,6 +35,14 @@ const MakeAppointmentPage: React.FC<Props> = ({
     timeEnd: formInfo.timeEnd,
     notes: "",
   });
+
+  const [alertModal, setAlertModal] = useState<ModalAlertState>(
+    initialModalAlertState
+  );
+
+  const showAlert = (title: string, message: string, onClose?: () => void) => {
+    setAlertModal({ show: true, title, message, onClose });
+  };
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -76,7 +88,7 @@ const MakeAppointmentPage: React.FC<Props> = ({
 
   const reviewAppointment = () => {
     if (!form.room || !form.date || !form.timeStart || !form.timeEnd) {
-      alert("Please fill in all required fields.");
+      showAlert("Required Fields", "Please fill in all required fields.");
       return;
     }
     setIsModalOpen(true);
@@ -99,7 +111,7 @@ const MakeAppointmentPage: React.FC<Props> = ({
     try {
       const selectedRoom = rooms.find((r) => r.name === form.room);
       if (!selectedRoom) {
-        alert("Invalid room selected.");
+        showAlert("Error", "Invalid room selected.");
         return;
       }
 
@@ -114,12 +126,13 @@ const MakeAppointmentPage: React.FC<Props> = ({
         ],
       });
 
-      alert("Booking successful!");
       setIsModalOpen(false);
-      navigate("/my-booking");
+      showAlert("Success", "Booking successful!", () =>
+        navigate("/my-booking")
+      );
     } catch (error) {
       console.error("Booking failed:", error);
-      alert("Failed to create booking. Please try again.");
+      showAlert("Error", "Failed to create booking. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -305,6 +318,17 @@ const MakeAppointmentPage: React.FC<Props> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {alertModal.show && (
+        <ModalAlert
+          title={alertModal.title}
+          message={alertModal.message}
+          onClose={() => {
+            setAlertModal(initialModalAlertState);
+            if (alertModal.onClose) alertModal.onClose();
+          }}
+        />
       )}
     </>
   );
