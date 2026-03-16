@@ -15,7 +15,10 @@ type Props = {
   onClick: () => void;
 };
 
-const MakeAppointmentPage: React.FC<Props> = ({ formInfo = initialAppointment, onClick = () => { } }) => {
+const MakeAppointmentPage: React.FC<Props> = ({
+  formInfo = initialAppointment,
+  onClick = () => {},
+}) => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -54,6 +57,7 @@ const MakeAppointmentPage: React.FC<Props> = ({ formInfo = initialAppointment, o
     // Handle midnight as 24:00 if it's after start time
     if (endH === 0 && endM === 0 && (startH > 0 || startM > 0)) {
       endH = 24;
+      endM = 0;
     }
 
     const diffMinutes = endH * 60 + endM - (startH * 60 + startM);
@@ -223,7 +227,6 @@ const MakeAppointmentPage: React.FC<Props> = ({ formInfo = initialAppointment, o
                 >
                   Book Room
                 </Button>
-
               </div>
             </form>
           </Card>

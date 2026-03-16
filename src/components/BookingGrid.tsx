@@ -1,16 +1,17 @@
 import { Clock } from "lucide-react";
 import { timeSlots } from "../data/mockData";
 import type { RoomWithBookings } from "../page/dashboard/DashboardPage";
-import type { BookedSlot } from "../services/roomService";
 
 type BookingGridProps = {
   selectedDate: string;
   roomsWithBookings: RoomWithBookings[];
   onSlotClick: (room: string, startHour: number) => void;
-  onBookingClick: (booking: BookedSlot) => void;
 };
 
-export function BookingGrid({ roomsWithBookings, onSlotClick, onBookingClick }: BookingGridProps) {
+export function BookingGrid({
+  roomsWithBookings,
+  onSlotClick,
+}: BookingGridProps) {
   const getHourIndex = (time: string) =>
     timeSlots.findIndex((t) => t.startsWith(time.split(":")[0]));
 
@@ -32,10 +33,7 @@ export function BookingGrid({ roomsWithBookings, onSlotClick, onBookingClick }: 
   return (
     <div className="mt-6 bg-white border border-gray-200 shadow-sm p-4 rounded-xl overflow-hidden">
       <div className="overflow-x-auto">
-        <div
-          style={gridStyle}
-          className="min-w-max border-t border-gray-200"
-        >
+        <div style={gridStyle} className="min-w-max border-t border-gray-200">
           {/* HEADER ROW */}
           <div
             style={{ gridColumn: 1, gridRow: 1 }}
@@ -109,10 +107,7 @@ export function BookingGrid({ roomsWithBookings, onSlotClick, onBookingClick }: 
                   }}
                   className="p-1"
                 >
-                  <div
-                    className="h-full bg-red-50 border-l-4 border-red-500 px-2 py-1 rounded-md shadow-sm flex flex-col justify-center overflow-hidden"
-                    onClick={() => onBookingClick()}
-                  >
+                  <div className="h-full bg-red-50 border-l-4 border-red-500 px-2 py-1 rounded-md shadow-sm flex flex-col justify-center overflow-hidden">
                     <p className="font-bold text-red-700 text-[10px] truncate">
                       Booked
                     </p>
