@@ -5,3 +5,4 @@ export { Sidebar } from "./SideBar";
 export { DateNavigator } from "./DateNavigator";
 export { DashboardHeader } from "./DashboardHeader";
 export { BookingGrid } from "./BookingGrid";
+export { ModalAlert } from "./ModalAlert";

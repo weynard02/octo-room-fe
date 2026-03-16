@@ -8,6 +8,11 @@ import {
   LogOut,
 } from "lucide-react";
 import authService from "../services/authService";
+import { ModalAlert } from "./ModalAlert";
+import {
+  type ModalAlertState,
+  initialModalAlertState,
+} from "../types/ModalState";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Home Page", path: "/dashboard" },
@@ -21,13 +26,19 @@ interface SidebarProps {
 export const Sidebar = ({ children }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const [modal, setModal] = useState<ModalAlertState>(initialModalAlertState);
 
   const user = authService.getUser();
 
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to logout?")) {
-      authService.logout();
-    }
+    setModal({
+      show: true,
+      title: "Logout",
+      message: "Are you sure you want to logout?",
+      confirmLabel: "Logout",
+      onConfirm: () => authService.logout(),
+      onClose: () => setModal(initialModalAlertState),
+    });
   };
 
   const initials =
@@ -145,6 +156,16 @@ export const Sidebar = ({ children }: SidebarProps) => {
 
       {/* Main content */}
       <div className="flex-1 overflow-y-auto">{children}</div>
+
+      {modal.show && (
+        <ModalAlert
+          title={modal.title}
+          message={modal.message}
+          confirmLabel={modal.confirmLabel}
+          onConfirm={modal.onConfirm}
+          onClose={() => setModal(initialModalAlertState)}
+        />
+      )}
     </div>
   );
 };
