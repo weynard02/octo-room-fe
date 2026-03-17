@@ -1,31 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Card, DashboardHeader } from "../../components";
+import { Button, Card, DashboardHeader, ModalAlert } from "../../components";
 import { formatDateKey } from "../../helpers/dataFormatter";
 import { statusStyles } from "./status";
 import bookingService, { type Booking } from "../../services/bookingService";
+import {
+  type ModalAlertState,
+  initialModalAlertState,
+} from "../../types/ModalState";
+import formattedDate from "../../utils/dateSetting";
 
 const BookingCard: React.FC<{
   booking: Booking;
-  onCancel: (bookingId: string) => Promise<void>;
-}> = ({ booking, onCancel }) => {
+  onCancelRequest: (booking: Booking) => void;
+}> = ({ booking, onCancelRequest }) => {
   const navigate = useNavigate();
-  const [cancelling, setCancelling] = useState(false);
-
-  const handleCancel = async () => {
-    if (
-      window.confirm(
-        `Are you sure you want to cancel booking ${booking.booking_id}?`
-      )
-    ) {
-      setCancelling(true);
-      try {
-        await onCancel(booking.booking_id);
-      } finally {
-        setCancelling(false);
-      }
-    }
-  };
 
   return (
     <Card className="w-full p-4">
@@ -37,8 +26,14 @@ const BookingCard: React.FC<{
               ? booking.room
               : booking.room?.name || "Unknown"}
           </p>
-          <p className="text-gray-500 text-sm">Date: {booking.date}</p>
-          <p className="text-gray-500 text-sm">ID: {booking.booking_id}</p>
+          <p className="text-gray-500 text-sm">
+            Date: {formattedDate(booking.date)}{" "}
+          </p>
+          <p className="text-gray-500 text-sm">
+            Time: {""}
+            {booking.slots?.[0]?.start_hour || "N/A"} -{" "}
+            {booking.slots?.[0]?.end_hour || "N/A"}
+          </p>
         </div>
         <div className="space-y-1 flex flex-col items-center gap-2">
           <span
@@ -64,11 +59,10 @@ const BookingCard: React.FC<{
             <Button
               variant="outline"
               size="sm"
-              disabled={cancelling}
               className="w-full text-red-600 border-red-400 hover:bg-red-50"
-              onClick={handleCancel}
+              onClick={() => onCancelRequest(booking)}
             >
-              {cancelling ? "Cancelling..." : "Cancel Booking"}
+              Cancel Booking
             </Button>
           )}
         </div>
@@ -84,6 +78,34 @@ export const MyBookingPage: React.FC = () => {
   const [allBookings, setAllBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [modal, setModal] = useState<ModalAlertState>(initialModalAlertState);
+
+  const showAlert = (title: string, message: string) => {
+    setModal({
+      ...initialModalAlertState,
+      show: true,
+      title,
+      message,
+      onClose: () => setModal(initialModalAlertState),
+    });
+  };
+
+  const showConfirm = (
+    title: string,
+    message: string,
+    confirmLabel: string,
+    onConfirm: () => void
+  ) => {
+    setModal({
+      show: true,
+      title,
+      message,
+      confirmLabel,
+      onConfirm,
+      onClose: () => setModal(initialModalAlertState),
+    });
+  };
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -106,13 +128,21 @@ export const MyBookingPage: React.FC = () => {
   const handleCancelBooking = async (bookingId: string) => {
     try {
       await bookingService.cancelBooking(bookingId);
-      alert("Booking cancelled successfully.");
-      // Refresh the list
+      showAlert("Success", "Booking cancelled successfully.");
       await fetchBookings();
     } catch (err) {
       console.error("Failed to cancel booking:", err);
-      alert("Failed to cancel booking. Please try again.");
+      showAlert("Error", "Failed to cancel booking. Please try again.");
     }
+  };
+
+  const handleCancelRequest = (booking: Booking) => {
+    showConfirm(
+      "Cancel Booking",
+      `Are you sure you want to cancel this booking?`,
+      "Cancel Booking",
+      () => handleCancelBooking(booking.booking_id)
+    );
   };
 
   const filteredBookings = allBookings.filter((b) => b.date === selectedDate);
@@ -147,11 +177,21 @@ export const MyBookingPage: React.FC = () => {
               <BookingCard
                 key={booking.booking_id}
                 booking={booking}
-                onCancel={handleCancelBooking}
+                onCancelRequest={handleCancelRequest}
               />
             ))
           )}
         </div>
+      )}
+
+      {modal.show && (
+        <ModalAlert
+          title={modal.title}
+          message={modal.message}
+          confirmLabel={modal.confirmLabel}
+          onConfirm={modal.onConfirm}
+          onClose={modal.onClose || (() => setModal(initialModalAlertState))}
+        />
       )}
     </div>
   );
