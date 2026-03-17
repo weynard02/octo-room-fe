@@ -42,7 +42,7 @@ export function DashboardHeader({
           Add Appoinment
         </Button>
         <div className="flex w-full h-full md:w-fit items-center gap-2">
-          <div className="flex flex-row min-h-full w-full h-full md:w-56 items-center gap-2 border border-gray-200 px-4 py-3 rounded-lg text-[10px] md:text-sm shadow-sm justify-between">
+          <div className="flex flex-row min-h-full w-full h-full md:w-46 items-center gap-2 border border-gray-200 px-4 py-3 rounded-lg text-[12px] md:text-sm shadow-sm justify-between md:justify-start">
             <Calendar size={16} />
             {formattedDate(selectedDate)}
           </div>
@@ -51,14 +51,14 @@ export function DashboardHeader({
             onClick={() => changeDate(-1)}
             className="flex cursor-pointer px-1 md:px-3 py-1 md:py-2.5 rounded-lg border border-gray-200 duration-200 bg-white hover:bg-gray-100"
           >
-            <ChevronLeft className="text-gray-800" />
+            <ChevronLeft className="text-gray-800 md:size-6" size={20} />
           </Button>
 
           <Button
             onClick={() => changeDate(1)}
             className="flex cursor-pointer px-1 md:px-3 py-1 md:py-2.5 rounded-lg border border-gray-200 duration-200 bg-white hover:bg-gray-100"
           >
-            <ChevronRight className="text-gray-800" />
+            <ChevronRight className="text-gray-800 md:size-6" size={20} />
           </Button>
         </div>
       </div>

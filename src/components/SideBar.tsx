@@ -90,7 +90,7 @@ export const Sidebar = ({ children }: SidebarProps) => {
                 key={label}
                 to={path}
                 title={collapsed ? label : ""}
-                className={`no-underline border-b-2 md:border-l-2 cursor-pointer flex flex-col md:flex-row items-center gap-1 md:gap-3 w-full transition-all duration-150 whitespace-nowrap ${
+                className={`no-underline border-b-2 md:border-l-2 md:border-b-0 cursor-pointer flex flex-col md:flex-row items-center gap-1 md:gap-3 w-full transition-all duration-150 whitespace-nowrap ${
                   isActive
                     ? "bg-red-50 border-red-600 text-red-600"
                     : "bg-none border-transparent text-gray-600 hover:bg-gray-50 hover:text-red-600"
