@@ -9,12 +9,14 @@ import {
   initialModalAlertState,
 } from "../../types/ModalState";
 import formattedDate from "../../utils/dateSetting";
+import { getEffectiveStatus } from "../../utils/bookingUtils";
 
 const BookingCard: React.FC<{
   booking: Booking;
   onCancelRequest: (booking: Booking) => void;
 }> = ({ booking, onCancelRequest }) => {
   const navigate = useNavigate();
+  const effectiveStatus = getEffectiveStatus(booking);
 
   return (
     <Card className="w-full p-4">
@@ -38,10 +40,10 @@ const BookingCard: React.FC<{
         <div className="space-y-1 flex flex-col items-center gap-2">
           <span
             className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${
-              statusStyles[booking.status] || "bg-gray-100 text-gray-800"
+              statusStyles[effectiveStatus] || "bg-gray-100 text-gray-800"
             }`}
           >
-            {booking.status}
+            {effectiveStatus}
           </span>
           <Button
             variant="outline"
@@ -55,16 +57,17 @@ const BookingCard: React.FC<{
           >
             View Details
           </Button>
-          {booking.status !== "cancelled" && booking.status !== "completed" && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full text-red-600 border-red-400 hover:bg-red-50"
-              onClick={() => onCancelRequest(booking)}
-            >
-              Cancel Booking
-            </Button>
-          )}
+          {effectiveStatus !== "cancelled" &&
+            effectiveStatus !== "completed" && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-red-600 border-red-400 hover:bg-red-50"
+                onClick={() => onCancelRequest(booking)}
+              >
+                Cancel Booking
+              </Button>
+            )}
         </div>
       </div>
     </Card>

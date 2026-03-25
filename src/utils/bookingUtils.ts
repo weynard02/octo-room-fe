@@ -1,5 +1,36 @@
 import { rooms, bookings, bookingSlots, customers } from "../data/mockData";
 import type MergedBooking from "../types/MergedBooking";
+import type { Booking } from "../services/bookingService";
+import { formatDateKey } from "../helpers/dataFormatter";
+
+export const isBookingCompleted = (booking: Booking): boolean => {
+  if (booking.status === "cancelled") return false;
+  if (booking.status === "completed") return true;
+
+  const now = new Date();
+
+  // If we have slots, check the end time of the last slot
+  if (booking.slots && booking.slots.length > 0) {
+    const lastSlot = booking.slots[booking.slots.length - 1];
+    const endHour = lastSlot.end_hour; // e.g., "08:00"
+
+    // Construct "YYYY-MM-DDTHH:mm:00+07:00" for comparison in WIB
+    const endDateTimeStr = `${booking.date}T${endHour}:00+07:00`;
+    const endTime = new Date(endDateTimeStr);
+
+    return endTime < now;
+  }
+
+  // Fallback to date comparison in WIB
+  const todayInWIB = formatDateKey(now);
+  return booking.date < todayInWIB;
+};
+
+export const getEffectiveStatus = (booking: Booking): string => {
+  if (booking.status === "cancelled") return "cancelled";
+  if (isBookingCompleted(booking)) return "completed";
+  return booking.status;
+};
 
 export function getMergedBookings(date: string) {
   const result: MergedBooking[] = [];
