@@ -6,6 +6,7 @@ import {
   ChevronRight,
   BookCheck,
   LogOut,
+  SquareDashedKanban,
 } from "lucide-react";
 import authService from "../services/authService";
 import { ModalAlert } from "./ModalAlert";
@@ -15,6 +16,11 @@ import {
 } from "../types/ModalState";
 
 const menuItems = [
+  {
+    icon: SquareDashedKanban,
+    label: "Admin Dashboard",
+    path: "/dashboard-admin",
+  },
   { icon: LayoutDashboard, label: "Home Page", path: "/dashboard" },
   { icon: BookCheck, label: "My Booking", path: "/my-booking" },
 ];
