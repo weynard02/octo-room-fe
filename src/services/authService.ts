@@ -16,6 +16,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  is_admin?: string | boolean;
 }
 
 export interface AuthData {
@@ -26,6 +27,7 @@ export interface AuthData {
   id?: string;
   email?: string;
   name?: string;
+  is_admin?: string | boolean;
 }
 
 const authService = {
@@ -43,7 +45,12 @@ const authService = {
 
     const user = authData.user || (authData.email ? authData : null);
     if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
+      // Ensure is_admin is preserved if it's in authData but not in authData.user
+      const userData = { ...user };
+      if (authData.is_admin !== undefined && userData.is_admin === undefined) {
+        userData.is_admin = authData.is_admin;
+      }
+      localStorage.setItem("user", JSON.stringify(userData));
     }
 
     return body;
@@ -66,7 +73,11 @@ const authService = {
 
     const user = authData.user || (authData.email ? authData : null);
     if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
+      const userData = { ...user };
+      if (authData.is_admin !== undefined && userData.is_admin === undefined) {
+        userData.is_admin = authData.is_admin;
+      }
+      localStorage.setItem("user", JSON.stringify(userData));
     }
 
     return body;
@@ -86,6 +97,11 @@ const authService = {
       console.error("Failed to parse user from localStorage", e);
       return null;
     }
+  },
+
+  listUsers: async (): Promise<ApiResponse<User[]>> => {
+    const response = await api.get<ApiResponse<User[]>>("/users");
+    return response.data;
   },
 
   logout: () => {

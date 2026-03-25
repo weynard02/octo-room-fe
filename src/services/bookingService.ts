@@ -9,6 +9,7 @@ export interface CreateBookingRequest {
   room_id: string;
   date: string; // "YYYY-MM-DD"
   slots: BookingSlot[];
+  customer_email?: string;
 }
 
 export interface Booking {
