@@ -10,6 +10,7 @@ import {
 } from "../../types/ModalState";
 import formattedDate from "../../utils/dateSetting";
 import { getEffectiveStatus } from "../../utils/bookingUtils";
+import authService from "../../services/authService";
 
 const BookingCard: React.FC<{
   booking: Booking;
@@ -124,8 +125,26 @@ export const MyBookingPage: React.FC = () => {
     }
   };
 
+  const fetchAllBookings = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await bookingService.getAllBookings();
+      setAllBookings(response.data);
+    } catch (err) {
+      console.error("Failed to fetch all bookings:", err);
+      setError("Failed to load all bookings. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchBookings();
+    if (authService.getUser()?.is_admin) {
+      fetchAllBookings();
+    } else {
+      fetchBookings();
+    }
   }, []);
 
   const handleCancelBooking = async (bookingId: string) => {

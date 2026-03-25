@@ -49,6 +49,16 @@ const bookingService = {
   },
 
   /**
+   * List all bookings (only for admin access).
+   * GET /api/bookings/all
+   * Requires authentication.
+   */
+  getAllBookings: async (): Promise<ApiResponse<Booking[]>> => {
+    const response = await api.get<ApiResponse<Booking[]>>("/bookings/all");
+    return response.data;
+  },
+
+  /**
    * Retrieve details of a specific booking.
    * GET /api/bookings/:booking_id
    * Requires authentication.
