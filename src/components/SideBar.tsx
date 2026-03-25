@@ -50,10 +50,10 @@ export const Sidebar = ({ children }: SidebarProps) => {
       .slice(0, 2) || "??";
 
   return (
-    <div className="flex h-screen bg-gray-50 font-sans">
+    <div className="flex flex-col md:flex-row h-screen bg-gray-50 font-sans">
       {/* Sidebar */}
       <div
-        className={`bg-white border-r border-gray-200 flex flex-col transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden shrink-0 ${
+        className={`flex md:flex-col w-full md:w-fit h-fit md:h-full items-center md:items-start justify-between bg-white border-r border-gray-200 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden shrink-0 ${
           collapsed ? "w-[72px]" : "w-[240px]"
         }`}
       >
@@ -68,21 +68,21 @@ export const Sidebar = ({ children }: SidebarProps) => {
               <div className="w-7 h-7 bg-gradient-to-br from-red-600 to-red-800 rounded-md flex items-center justify-center text-sm text-white font-bold">
                 OR
               </div>
-              <span className="text-red-700 text-[15px] font-semibold tracking-[0.02em]">
+              <span className="hidden md:block text-red-700 text-[15px] font-semibold tracking-[0.02em]">
                 OctoRoom
               </span>
             </div>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="bg-none border-none cursor-pointer text-gray-400 p-1 flex items-center justify-center transition-colors duration-200 hover:text-red-600 shrink-0"
+            className="hidden md:flex bg-none border-none cursor-pointer text-gray-400 p-1  items-center justify-center transition-colors duration-200 hover:text-red-600 shrink-0"
           >
             {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 py-3 flex flex-col gap-[2px]">
+        <nav className="flex-1 py-3 flex flex-row md:flex-col w-full md:gap-0.5">
           {menuItems.map(({ icon: Icon, label, path }) => {
             const isActive = location.pathname === path;
             return (
@@ -90,14 +90,14 @@ export const Sidebar = ({ children }: SidebarProps) => {
                 key={label}
                 to={path}
                 title={collapsed ? label : ""}
-                className={`no-underline border-l-2 cursor-pointer flex items-center gap-3 w-full transition-all duration-150 whitespace-nowrap ${
+                className={`no-underline border-b-2 md:border-l-2 md:border-b-0 cursor-pointer flex flex-col md:flex-row items-center gap-1 md:gap-3 w-full transition-all duration-150 whitespace-nowrap ${
                   isActive
                     ? "bg-red-50 border-red-600 text-red-600"
                     : "bg-none border-transparent text-gray-600 hover:bg-gray-50 hover:text-red-600"
                 } ${
                   collapsed
-                    ? "py-[11px] justify-center"
-                    : "py-[11px] px-5 justify-start"
+                    ? "py-2 md:py-[11px] justify-center"
+                    : "py-2 md:py-[11px] md:px-5 justify-start"
                 }`}
               >
                 <Icon
@@ -107,7 +107,7 @@ export const Sidebar = ({ children }: SidebarProps) => {
                 />
                 {!collapsed && (
                   <span
-                    className={`text-[13px] tracking-[0.01em] ${
+                    className={`text-[11px] md:text-[13px] tracking-[0.01em] ${
                       isActive ? "font-medium" : "font-normal"
                     }`}
                   >
@@ -120,22 +120,22 @@ export const Sidebar = ({ children }: SidebarProps) => {
         </nav>
 
         {/* User & Settings */}
-        <div className="mt-auto border-t border-gray-100">
+        <div className="md:w-full md:mt-auto md:border-t md:border-gray-100">
           <div
-            className={`flex items-center p-4 ${
-              collapsed ? "justify-center" : "px-5 justify-between"
+            className={`flex flex-row p-4 items-center ${
+              collapsed ? "justify-center " : "px-5 justify-between"
             }`}
           >
-            <div className="flex items-center gap-[10px]">
-              <div className="w-[30px] h-[30px] rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 text-[12px] shrink-0 font-medium">
+            <div className="flex flex-col md:flex-row items-center md:gap-[10px]">
+              <div className="flex w-[20px] h-[20px] md:w-[30px] md:h-[30px] rounded-full bg-gray-100 border border-gray-200  items-center justify-center text-gray-600 text-[8px] md:text-[12px] shrink-0 font-medium">
                 {initials}
               </div>
               {!collapsed && (
-                <div className="flex flex-col min-w-0">
-                  <span className="text-gray-800 text-[12px] font-medium leading-none truncate">
+                <div className="md:flex flex-col min-w-0">
+                  <span className="text-gray-800 text-[10px] md:text-[12px] font-medium leading-none truncate">
                     {user?.name || "Anonymous"}
                   </span>
-                  <span className="text-gray-500 text-[10px] mt-1 leading-none">
+                  <span className="hidden md:block text-gray-500 text-[10px] mt-1 leading-none">
                     Member
                   </span>
                 </div>
@@ -143,11 +143,11 @@ export const Sidebar = ({ children }: SidebarProps) => {
             </div>
             {!collapsed && (
               <button
-                className="text-gray-400 hover:text-red-600 transition-colors p-1"
+                className="hidden md:block text-gray-400 hover:text-red-600 transition-colors p-1"
                 title="Logout"
                 onClick={handleLogout}
               >
-                <LogOut size={18} strokeWidth={1.6} />
+                <LogOut strokeWidth={1.6} className="h-5 md:h-6 w-5 md:w-6" />
               </button>
             )}
           </div>

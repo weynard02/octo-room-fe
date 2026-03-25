@@ -1,7 +1,7 @@
 const formattedDate = (dateString: string) => {
   const newDate = new Date(dateString);
   const dateConfig: Intl.DateTimeFormatOptions = {
-    weekday: "long",
+    weekday: "short",
     day: "2-digit",
     month: "short",
     year: "numeric",
