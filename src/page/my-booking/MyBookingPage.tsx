@@ -169,12 +169,15 @@ export const MyBookingPage: React.FC = () => {
 
   const filteredBookings = allBookings.filter((b) => b.date === selectedDate);
 
+  const isAdmin = authService.getUser()?.isAdmin === true || authService.getUser()?.isAdmin === "true";
+
   return (
     <div className="space-y-4 p-4">
       <DashboardHeader
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
         totalBookings={allBookings.length}
+        isAdmin={isAdmin}
       />
 
       {loading ? (

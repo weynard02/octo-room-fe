@@ -8,6 +8,7 @@ import bookingService from "../../services/bookingService";
 import { formatDateKey } from "../../helpers/dataFormatter";
 import { AppointmentModal } from "../../components/AppointmentModal";
 import type AppointmentType from "../../types/Appointment";
+import authService from "../../services/authService";
 
 export interface RoomWithBookings extends Room {
   bookings: BookedSlot[];
@@ -23,6 +24,8 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [slotInfo, setSlotInfo] = useState<AppointmentType | null>(null);
+
+  const isAdmin = authService.getUser()?.isAdmin === true || authService.getUser()?.isAdmin === "true";
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -96,6 +99,7 @@ export default function DashboardPage() {
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
         totalBookings={totalBookings}
+        isAdmin={isAdmin}
       />
 
       {loading ? (

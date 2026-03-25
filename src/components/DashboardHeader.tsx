@@ -7,12 +7,14 @@ type DashboardHeaderProps = {
   selectedDate: string;
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>;
   totalBookings: number;
+  isAdmin?: boolean;
 };
 
 export function DashboardHeader({
   selectedDate,
   setSelectedDate,
   totalBookings,
+  isAdmin,
 }: DashboardHeaderProps) {
   const navigate = useNavigate();
   function changeDate(days: number) {
@@ -31,6 +33,11 @@ export function DashboardHeader({
           You have <span className="text-[#e11d2e]">{totalBookings}</span>{" "}
           booked {totalBookings === 1 ? "room" : "rooms"}
         </h2>
+        {isAdmin && (
+          <h3 className="text-sm text-green-600">
+            You have admin privileges, you can manage all the bookings and rooms
+          </h3>
+        )}
       </div>
 
       <div className="flex flex-col w-full items-end gap-2">
