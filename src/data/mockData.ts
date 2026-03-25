@@ -44,7 +44,7 @@ export const customers = [
     phone: "081234567890",
     email: "weynard@example.com",
     password: "hashed_password_1",
-    is_admin: "0",
+    isAdmin: "0",
   },
   {
     customer_id: "c-002",
@@ -52,7 +52,7 @@ export const customers = [
     phone: "081298765432",
     email: "sarah@example.com",
     password: "hashed_password_2",
-    is_admin: "0",
+    isAdmin: "0",
   },
   {
     customer_id: "c-003",
@@ -60,7 +60,7 @@ export const customers = [
     phone: "080000000000",
     email: "admin@example.com",
     password: "hashed_password_admin",
-    is_admin: "1",
+    isAdmin: "1",
   },
 ];
 

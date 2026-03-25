@@ -43,8 +43,7 @@ const MakeAppointmentPage: React.FC<Props> = ({
     initialModalAlertState
   );
 
-  const isAdmin =
-    currentUser?.is_admin === "1" || currentUser?.is_admin === true;
+  const isAdmin = currentUser?.isAdmin === "1" || currentUser?.isAdmin === true;
 
   const showAlert = (title: string, message: string, onClose?: () => void) => {
     setAlertModal({ show: true, title, message, onClose });

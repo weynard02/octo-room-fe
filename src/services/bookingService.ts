@@ -25,6 +25,13 @@ export interface Booking {
   updated_at?: string;
 }
 
+export interface GetAllBookingsParams {
+  room_type_id?: string;
+  year?: number | string;
+  room_id?: string;
+  month?: number | string;
+}
+
 const bookingService = {
   /**
    * Reserve a room for one or more time slots.
@@ -53,8 +60,12 @@ const bookingService = {
    * GET /api/bookings/all
    * Requires authentication.
    */
-  getAllBookings: async (): Promise<ApiResponse<Booking[]>> => {
-    const response = await api.get<ApiResponse<Booking[]>>("/bookings/all");
+  getAllBookings: async (
+    params?: GetAllBookingsParams
+  ): Promise<ApiResponse<Booking[]>> => {
+    const response = await api.get<ApiResponse<Booking[]>>("/bookings/all", {
+      params,
+    });
     return response.data;
   },
 

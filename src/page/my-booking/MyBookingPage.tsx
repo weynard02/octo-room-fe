@@ -140,7 +140,7 @@ export const MyBookingPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (authService.getUser()?.is_admin) {
+    if (authService.getUser()?.isAdmin) {
       fetchAllBookings();
     } else {
       fetchBookings();

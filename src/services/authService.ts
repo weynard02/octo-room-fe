@@ -16,7 +16,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  is_admin?: string | boolean;
+  isAdmin?: string | boolean;
 }
 
 export interface AuthData {
@@ -27,7 +27,7 @@ export interface AuthData {
   id?: string;
   email?: string;
   name?: string;
-  is_admin?: string | boolean;
+  isAdmin?: string | boolean;
 }
 
 const authService = {
@@ -45,10 +45,10 @@ const authService = {
 
     const user = authData.user || (authData.email ? authData : null);
     if (user) {
-      // Ensure is_admin is preserved if it's in authData but not in authData.user
+      // Ensure isAdmin is preserved if it's in authData but not in authData.user
       const userData = { ...user };
-      if (authData.is_admin !== undefined && userData.is_admin === undefined) {
-        userData.is_admin = authData.is_admin;
+      if (authData.isAdmin !== undefined && userData.isAdmin === undefined) {
+        userData.isAdmin = authData.isAdmin;
       }
       localStorage.setItem("user", JSON.stringify(userData));
     }
@@ -74,8 +74,8 @@ const authService = {
     const user = authData.user || (authData.email ? authData : null);
     if (user) {
       const userData = { ...user };
-      if (authData.is_admin !== undefined && userData.is_admin === undefined) {
-        userData.is_admin = authData.is_admin;
+      if (authData.isAdmin !== undefined && userData.isAdmin === undefined) {
+        userData.isAdmin = authData.isAdmin;
       }
       localStorage.setItem("user", JSON.stringify(userData));
     }
