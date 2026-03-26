@@ -11,6 +11,7 @@ import {
 import formattedDate from "../../utils/dateSetting";
 import { getEffectiveStatus } from "../../utils/bookingUtils";
 import authService from "../../services/authService";
+import { AdminHeader } from "../../components/AdminHeader";
 
 const BookingCard: React.FC<{
   booking: Booking;
@@ -169,17 +170,24 @@ export const MyBookingPage: React.FC = () => {
 
   const filteredBookings = allBookings.filter((b) => b.date === selectedDate);
 
-  const isAdmin = authService.getUser()?.isAdmin === true || authService.getUser()?.isAdmin === "true";
-
+  const isAdmin =
+    authService.getUser()?.isAdmin === true ||
+    authService.getUser()?.isAdmin === "true";
   return (
-    <div className="space-y-4 p-4">
-      <DashboardHeader
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-        totalBookings={allBookings.length}
-        isAdmin={isAdmin}
-      />
-
+    <div className="space-y-4 p-6">
+      {isAdmin ? (
+        <AdminHeader
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          totalBookings={allBookings.length}
+        />
+      ) : (
+        <DashboardHeader
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          totalBookings={allBookings.length}
+        />
+      )}
       {loading ? (
         <div className="flex justify-center p-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
