@@ -4,6 +4,7 @@ import type AppointmentType from "../../types/Appointment";
 import formattedDate from "../../utils/dateSetting";
 import bookingService from "../../services/bookingService";
 import roomService, { type Room } from "../../services/roomService";
+import authService, { type User } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
 
 import bookmarkIcon from "../../assets/icons/3d-bookmark.png";
@@ -26,6 +27,7 @@ const MakeAppointmentPage: React.FC<Props> = ({
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [currentUser] = useState<User | null>(authService.getUser());
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState<AppointmentType>({
@@ -34,11 +36,14 @@ const MakeAppointmentPage: React.FC<Props> = ({
     timeStart: formInfo.timeStart,
     timeEnd: formInfo.timeEnd,
     notes: "",
+    customer_email: "",
   });
 
   const [alertModal, setAlertModal] = useState<ModalAlertState>(
     initialModalAlertState
   );
+
+  const isAdmin = currentUser?.isAdmin === "1" || currentUser?.isAdmin === true;
 
   const showAlert = (title: string, message: string, onClose?: () => void) => {
     setAlertModal({ show: true, title, message, onClose });
@@ -124,6 +129,7 @@ const MakeAppointmentPage: React.FC<Props> = ({
             end_hour: `${form.date}T${form.timeEnd}:00`,
           },
         ],
+        customer_email: form.customer_email || undefined,
       });
 
       setIsModalOpen(false);
@@ -149,7 +155,20 @@ const MakeAppointmentPage: React.FC<Props> = ({
           >
             <form className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="md:col-span-2">
+                {isAdmin && (
+                  <Input
+                    id="customer_email"
+                    name="customer_email"
+                    label="Customer Email"
+                    type="email"
+                    value={form.customer_email}
+                    onChange={handleOnChange}
+                  />
+                )}
+
+                <div
+                  className={`${isAdmin ? "md:col-span-1" : "md:col-span-2"}`}
+                >
                   <label
                     className="block text-sm font-medium text-gray-700 mb-1"
                     htmlFor="room"
@@ -176,6 +195,7 @@ const MakeAppointmentPage: React.FC<Props> = ({
                     </select>
                   </div>
                 </div>
+
                 <Input
                   id="date"
                   name="date"
@@ -292,6 +312,14 @@ const MakeAppointmentPage: React.FC<Props> = ({
                   </h3>
                 </div>
               </div>
+              {isAdmin && form.customer_email && (
+                <div className="">
+                  <h3 className="text-sm text-gray-500">Booking for:</h3>
+                  <h3 className="font-medium text-[16px]">
+                    {form.customer_email ? form.customer_email : "-"}
+                  </h3>
+                </div>
+              )}
               <div className="">
                 <h3 className="text-sm text-gray-500">Notes:</h3>
                 <h3 className="font-medium text-[16px]">

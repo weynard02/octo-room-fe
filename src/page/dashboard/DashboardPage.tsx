@@ -8,6 +8,8 @@ import bookingService from "../../services/bookingService";
 import { formatDateKey } from "../../helpers/dataFormatter";
 import { AppointmentModal } from "../../components/AppointmentModal";
 import type AppointmentType from "../../types/Appointment";
+import authService from "../../services/authService";
+import { AdminHeader } from "../../components/AdminHeader";
 
 export interface RoomWithBookings extends Room {
   bookings: BookedSlot[];
@@ -24,6 +26,10 @@ export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [slotInfo, setSlotInfo] = useState<AppointmentType | null>(null);
 
+  const isAdmin =
+    authService.getUser()?.isAdmin === true ||
+    authService.getUser()?.isAdmin === "true";
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoading(true);
@@ -31,7 +37,9 @@ export default function DashboardPage() {
       try {
         const [roomsResponse, myBookingsResponse] = await Promise.all([
           roomService.listRooms(),
-          bookingService.getMyBookings(),
+          isAdmin
+            ? bookingService.getAllBookings()
+            : bookingService.getMyBookings(),
         ]);
 
         const rooms = roomsResponse.data;
@@ -92,11 +100,19 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6">
-      <DashboardHeader
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-        totalBookings={totalBookings}
-      />
+      {isAdmin ? (
+        <AdminHeader
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          totalBookings={totalBookings}
+        />
+      ) : (
+        <DashboardHeader
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          totalBookings={totalBookings}
+        />
+      )}
 
       {loading ? (
         <div className="flex justify-center items-center h-64">

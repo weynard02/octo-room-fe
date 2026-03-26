@@ -9,6 +9,7 @@ export interface CreateBookingRequest {
   room_id: string;
   date: string; // "YYYY-MM-DD"
   slots: BookingSlot[];
+  customer_email?: string;
 }
 
 export interface Booking {
@@ -22,6 +23,14 @@ export interface Booking {
   slots?: BookingSlot[];
   created_at?: string;
   updated_at?: string;
+  customer_email?: string;
+}
+
+export interface GetAllBookingsParams {
+  room_type_id?: string;
+  year?: number | string;
+  room_id?: string;
+  month?: number | string;
 }
 
 const bookingService = {
@@ -44,6 +53,20 @@ const bookingService = {
    */
   getMyBookings: async (): Promise<ApiResponse<Booking[]>> => {
     const response = await api.get<ApiResponse<Booking[]>>("/bookings/my");
+    return response.data;
+  },
+
+  /**
+   * List all bookings (only for admin access).
+   * GET /api/bookings/all
+   * Requires authentication.
+   */
+  getAllBookings: async (
+    params?: GetAllBookingsParams
+  ): Promise<ApiResponse<Booking[]>> => {
+    const response = await api.get<ApiResponse<Booking[]>>("/bookings/all", {
+      params,
+    });
     return response.data;
   },
 
