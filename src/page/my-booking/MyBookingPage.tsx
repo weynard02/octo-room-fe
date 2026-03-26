@@ -9,12 +9,17 @@ import {
   initialModalAlertState,
 } from "../../types/ModalState";
 import formattedDate from "../../utils/dateSetting";
+import { getEffectiveStatus } from "../../utils/bookingUtils";
+import authService from "../../services/authService";
+import { AdminHeader } from "../../components/AdminHeader";
 
 const BookingCard: React.FC<{
   booking: Booking;
+  isAdmin: boolean;
   onCancelRequest: (booking: Booking) => void;
-}> = ({ booking, onCancelRequest }) => {
+}> = ({ booking, isAdmin, onCancelRequest }) => {
   const navigate = useNavigate();
+  const effectiveStatus = getEffectiveStatus(booking);
 
   return (
     <Card className="w-full p-4">
@@ -34,14 +39,19 @@ const BookingCard: React.FC<{
             {booking.slots?.[0]?.start_hour || "N/A"} -{" "}
             {booking.slots?.[0]?.end_hour || "N/A"}
           </p>
+          {isAdmin && (
+            <p className="text-gray-500 text-sm">
+              Customer Email: {booking.customer_email || "N/A"}
+            </p>
+          )}
         </div>
         <div className="space-y-1 flex flex-col items-center gap-2">
           <span
             className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${
-              statusStyles[booking.status] || "bg-gray-100 text-gray-800"
+              statusStyles[effectiveStatus] || "bg-gray-100 text-gray-800"
             }`}
           >
-            {booking.status}
+            {effectiveStatus}
           </span>
           <Button
             variant="outline"
@@ -55,16 +65,17 @@ const BookingCard: React.FC<{
           >
             View Details
           </Button>
-          {booking.status !== "cancelled" && booking.status !== "completed" && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full text-red-600 border-red-400 hover:bg-red-50"
-              onClick={() => onCancelRequest(booking)}
-            >
-              Cancel Booking
-            </Button>
-          )}
+          {effectiveStatus !== "cancelled" &&
+            effectiveStatus !== "completed" && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-red-600 border-red-400 hover:bg-red-50"
+                onClick={() => onCancelRequest(booking)}
+              >
+                Cancel Booking
+              </Button>
+            )}
         </div>
       </div>
     </Card>
@@ -121,8 +132,26 @@ export const MyBookingPage: React.FC = () => {
     }
   };
 
+  const fetchAllBookings = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await bookingService.getAllBookings();
+      setAllBookings(response.data);
+    } catch (err) {
+      console.error("Failed to fetch all bookings:", err);
+      setError("Failed to load all bookings. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchBookings();
+    if (authService.getUser()?.isAdmin) {
+      fetchAllBookings();
+    } else {
+      fetchBookings();
+    }
   }, []);
 
   const handleCancelBooking = async (bookingId: string) => {
@@ -147,14 +176,24 @@ export const MyBookingPage: React.FC = () => {
 
   const filteredBookings = allBookings.filter((b) => b.date === selectedDate);
 
+  const isAdmin =
+    authService.getUser()?.isAdmin === true ||
+    authService.getUser()?.isAdmin === "true";
   return (
-    <div className="space-y-4 p-4">
-      <DashboardHeader
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-        totalBookings={allBookings.length}
-      />
-
+    <div className="space-y-4 p-6">
+      {isAdmin ? (
+        <AdminHeader
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          totalBookings={allBookings.length}
+        />
+      ) : (
+        <DashboardHeader
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          totalBookings={allBookings.length}
+        />
+      )}
       {loading ? (
         <div className="flex justify-center p-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -177,6 +216,7 @@ export const MyBookingPage: React.FC = () => {
               <BookingCard
                 key={booking.booking_id}
                 booking={booking}
+                isAdmin={isAdmin}
                 onCancelRequest={handleCancelRequest}
               />
             ))

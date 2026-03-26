@@ -113,7 +113,7 @@ export const Sidebar = ({ children }: SidebarProps) => {
                 />
                 {!collapsed && (
                   <span
-                    className={`text-[13px] tracking-[0.01em] ${
+                    className={`text-[11px] md:text-[13px] tracking-[0.01em] ${
                       isActive ? "font-medium" : "font-normal"
                     }`}
                   >
@@ -141,7 +141,7 @@ export const Sidebar = ({ children }: SidebarProps) => {
                   <span className="text-gray-800 text-[12px] font-medium leading-none truncate">
                     {user?.name || "Anonymous"}
                   </span>
-                  <span className="text-gray-500 text-[10px] mt-1 leading-none">
+                  <span className="hidden md:block text-gray-500 text-[10px] mt-1 leading-none">
                     Member
                   </span>
                 </div>
@@ -149,11 +149,11 @@ export const Sidebar = ({ children }: SidebarProps) => {
             </div>
             {!collapsed && (
               <button
-                className="text-gray-400 hover:text-red-600 transition-colors p-1"
+                className="hidden md:block text-gray-400 hover:text-red-600 transition-colors p-1"
                 title="Logout"
                 onClick={handleLogout}
               >
-                <LogOut size={18} strokeWidth={1.6} />
+                <LogOut strokeWidth={1.6} className="h-5 md:h-6 w-5 md:w-6" />
               </button>
             )}
           </div>

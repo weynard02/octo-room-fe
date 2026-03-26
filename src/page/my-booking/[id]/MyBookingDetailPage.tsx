@@ -10,6 +10,7 @@ import {
   initialModalAlertState,
 } from "../../../types/ModalState";
 import formattedDate from "../../../utils/dateSetting";
+import { getEffectiveStatus } from "../../../utils/bookingUtils";
 
 export const MyBookingDetailPage: React.FC = () => {
   const { id } = useParams();
@@ -19,6 +20,8 @@ export const MyBookingDetailPage: React.FC = () => {
   const [cancelling, setCancelling] = useState(false);
 
   const [modal, setModal] = useState<ModalAlertState>(initialModalAlertState);
+
+  const effectiveStatus = booking ? getEffectiveStatus(booking) : "";
 
   const showAlert = (title: string, message: string) => {
     setModal({
@@ -142,10 +145,10 @@ export const MyBookingDetailPage: React.FC = () => {
               <span className="font-semibold text-gray-600">Status:</span>{" "}
               <span
                 className={`capitalize px-2 py-1 rounded text-sm font-medium ${
-                  statusStyles[booking.status] || "bg-gray-100 text-gray-800"
+                  statusStyles[effectiveStatus] || "bg-gray-100 text-gray-800"
                 }`}
               >
-                {booking.status}
+                {effectiveStatus}
               </span>
             </p>
           </div>
@@ -162,7 +165,7 @@ export const MyBookingDetailPage: React.FC = () => {
           </div>
         </div>
 
-        {booking.status !== "cancelled" && booking.status !== "completed" && (
+        {effectiveStatus !== "cancelled" && effectiveStatus !== "completed" && (
           <div className="pt-4 border-t border-gray-100 flex justify-end">
             <Button
               variant="outline"
