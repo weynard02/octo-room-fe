@@ -60,14 +60,13 @@ export default function ChartAdmin() {
         data: [80, 95, 105, 110, 120, 130, 150, 180, 190, 200, 220, 250],
         backgroundColor: "rgba(244, 255, 237, 1)",
         borderColor: "rgba(82, 192, 62, 1)",
-
         borderWidth: 1,
       },
     ],
   };
 
   return (
-    <div className="w-full bg-white px-10 py-6 rounded-3xl">
+    <div className="w-full bg-white px-10 py-6 rounded-3xl shadow-lg shadow-[#f0f0f0]">
       <Bar
         data={dataAdmin}
         options={{
@@ -77,7 +76,14 @@ export default function ChartAdmin() {
               display: true,
               text: "Total Request Meeting Room",
               color: "#212121",
+              padding: { top: 4, bottom: 12 },
               font: { size: 24 },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 300,
             },
           },
         }}

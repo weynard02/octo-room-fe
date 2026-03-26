@@ -20,9 +20,20 @@ const menuItems = [
     icon: KanbanSquare,
     label: "Admin Dashboard",
     path: "/dashboard-admin",
+    adminOnly: true,
   },
-  { icon: LayoutDashboard, label: "Home Page", path: "/dashboard" },
-  { icon: BookCheck, label: "My Booking", path: "/my-booking" },
+  {
+    icon: LayoutDashboard,
+    label: "Home Page",
+    path: "/dashboard",
+    adminOnly: false,
+  },
+  {
+    icon: BookCheck,
+    label: "My Booking",
+    path: "/my-booking",
+    adminOnly: false,
+  },
 ];
 
 interface SidebarProps {
@@ -89,40 +100,42 @@ export const Sidebar = ({ children }: SidebarProps) => {
 
         {/* Nav */}
         <nav className="flex-1 py-3 flex flex-row md:flex-col w-full md:gap-0.5">
-          {menuItems.map(({ icon: Icon, label, path }) => {
-            const isActive = location.pathname === path;
-            return (
-              <Link
-                key={label}
-                to={path}
-                title={collapsed ? label : ""}
-                className={`no-underline border-l-2 cursor-pointer flex flex-col md:flex-row items-center md:gap-3 w-full transition-all duration-150 whitespace-nowrap ${
-                  isActive
-                    ? "bg-red-50 border-red-600 text-red-600"
-                    : "bg-none border-transparent text-gray-600 hover:bg-gray-50 hover:text-red-600"
-                } ${
-                  collapsed
-                    ? "py-1 md:py-[11px] justify-center"
-                    : "py-1 md:py-[11px] md:px-5 justify-start"
-                }`}
-              >
-                <Icon
-                  size={17}
-                  strokeWidth={isActive ? 2 : 1.6}
-                  className="shrink-0"
-                />
-                {!collapsed && (
-                  <span
-                    className={`text-[11px] md:text-[13px] tracking-[0.01em] ${
-                      isActive ? "font-medium" : "font-normal"
-                    }`}
-                  >
-                    {label}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
+          {menuItems
+            .filter((item) => !item.adminOnly || user?.isAdmin)
+            .map(({ icon: Icon, label, path }) => {
+              const isActive = location.pathname === path;
+              return (
+                <Link
+                  key={label}
+                  to={path}
+                  title={collapsed ? label : ""}
+                  className={`no-underline border-l-2 cursor-pointer flex flex-col md:flex-row items-center md:gap-3 w-full transition-all duration-150 whitespace-nowrap ${
+                    isActive
+                      ? "bg-red-50 border-red-600 text-red-600"
+                      : "bg-none border-transparent text-gray-600 hover:bg-gray-50 hover:text-red-600"
+                  } ${
+                    collapsed
+                      ? "py-1 md:py-[11px] justify-center"
+                      : "py-1 md:py-[11px] md:px-5 justify-start"
+                  }`}
+                >
+                  <Icon
+                    size={17}
+                    strokeWidth={isActive ? 2 : 1.6}
+                    className="shrink-0"
+                  />
+                  {!collapsed && (
+                    <span
+                      className={`text-[11px] md:text-[13px] tracking-[0.01em] ${
+                        isActive ? "font-medium" : "font-normal"
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
         </nav>
 
         {/* User & Settings */}
