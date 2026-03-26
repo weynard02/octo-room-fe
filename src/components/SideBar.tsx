@@ -6,7 +6,7 @@ import {
   ChevronRight,
   BookCheck,
   LogOut,
-  SquareDashedKanban,
+  KanbanSquare,
 } from "lucide-react";
 import authService from "../services/authService";
 import { ModalAlert } from "./ModalAlert";
@@ -17,7 +17,7 @@ import {
 
 const menuItems = [
   {
-    icon: SquareDashedKanban,
+    icon: KanbanSquare,
     label: "Admin Dashboard",
     path: "/dashboard-admin",
   },
