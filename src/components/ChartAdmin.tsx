@@ -25,7 +25,7 @@ ChartJs.register(
 );
 
 export default function ChartAdmin() {
-  const dataChart = {
+  const dataAdmin = {
     labels: [
       "Jan",
       "Feb",
@@ -66,11 +66,10 @@ export default function ChartAdmin() {
   };
 
   return (
-    <div className="w-fit bg-white px-10 py-6 rounded-3xl">
+    <div className="w-full bg-white px-10 py-6 rounded-3xl">
       <Bar
-        data={dataChart}
+        data={dataAdmin}
         options={{
-          responsive: true,
           plugins: {
             legend: { position: "top" },
             title: {
