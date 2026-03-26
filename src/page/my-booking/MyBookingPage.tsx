@@ -15,8 +15,9 @@ import { AdminHeader } from "../../components/AdminHeader";
 
 const BookingCard: React.FC<{
   booking: Booking;
+  isAdmin: boolean;
   onCancelRequest: (booking: Booking) => void;
-}> = ({ booking, onCancelRequest }) => {
+}> = ({ booking, isAdmin, onCancelRequest }) => {
   const navigate = useNavigate();
   const effectiveStatus = getEffectiveStatus(booking);
 
@@ -38,6 +39,11 @@ const BookingCard: React.FC<{
             {booking.slots?.[0]?.start_hour || "N/A"} -{" "}
             {booking.slots?.[0]?.end_hour || "N/A"}
           </p>
+          {isAdmin && (
+            <p className="text-gray-500 text-sm">
+              Customer Email: {booking.customer_email || "N/A"}
+            </p>
+          )}
         </div>
         <div className="space-y-1 flex flex-col items-center gap-2">
           <span
@@ -210,6 +216,7 @@ export const MyBookingPage: React.FC = () => {
               <BookingCard
                 key={booking.booking_id}
                 booking={booking}
+                isAdmin={isAdmin}
                 onCancelRequest={handleCancelRequest}
               />
             ))

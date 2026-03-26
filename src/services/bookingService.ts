@@ -23,6 +23,7 @@ export interface Booking {
   slots?: BookingSlot[];
   created_at?: string;
   updated_at?: string;
+  customer_email?: string;
 }
 
 export interface GetAllBookingsParams {
