@@ -11,8 +11,8 @@ export default function AppRoutes() {
   const navigate = useNavigate();
   return (
     <Routes>
-      <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/dashboard-admin" element={<DashboarAdminPage />} />
+      <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/my-booking" element={<MyBookingPage />} />
       <Route path="/all-bookings" element={<AllBookingsPage />} />
       <Route path="/my-booking/:id" element={<MyBookingDetailPage />} />

@@ -26,7 +26,7 @@ export function DashboardHeader({
   return (
     <div className="flex flex-col md:flex-row justify-between items-center bg-white shadow-sm border border-gray-200 p-3 md:p-4 rounded-xl gap-2">
       <div className="flex flex-col">
-        <p className="text-sm text-gray-500">Hello, Good Morning</p>
+        <p className="text-sm text-gray-500">Hello, Good Morning!</p>
         <h2 className="font-semibold">
           You have <span className="text-[#e11d2e]">{totalBookings}</span>{" "}
           booked {totalBookings === 1 ? "room" : "rooms"}

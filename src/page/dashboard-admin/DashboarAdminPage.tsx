@@ -2,18 +2,64 @@ import ChartAdmin from "../../components/ChartAdmin";
 import { Button } from "../../components";
 import authService from "../../services/authService";
 
-import bgCount from "../../assets/background/Bg-Hero-Count.png";
 import bgDownload from "../../assets/background/Bg-Download.png";
+import exportService from "../../services/exportService";
+import { FileSignature, FileText } from "lucide-react";
+import bookingService, { type Booking } from "../../services/bookingService";
+import { useEffect, useState } from "react";
+import CounterCard, {
+  type CounterCardType,
+} from "../../components/CounterCard";
+import {
+  rateSuccess,
+  sumCancled,
+  sumSuccess,
+} from "../../utils/dashboardSummary";
+import ChartDoughnuts from "../../components/DoughnutCharts";
 
 export default function DashboarAdminPage() {
-  const dataDummyDashboard = [
-    { title: "Total", total: 644 },
-    { title: "Average", total: 108 },
-    { title: "Completed", total: 602 },
-    { title: "Cancel", total: 42 },
-  ];
+  const [dataBooking, setDataBooking] = useState<Booking[]>([]);
 
   const user = authService.getUser();
+
+  useEffect(() => {
+    const fetchingData = async () => {
+      const res = await bookingService.getAllBookings();
+
+      const resDataBooking = res.data;
+      setDataBooking(resDataBooking);
+    };
+
+    fetchingData();
+    console.log("ini data bookingnya: ", dataBooking);
+  }, []);
+
+  const dataHeader: CounterCardType[] = [
+    {
+      title: "Total",
+      count: `${dataBooking.length}`,
+      notes: "total request room",
+      variant: "red",
+    },
+    {
+      title: "Completed",
+      count: `${sumSuccess(dataBooking)}`,
+      notes: "room has been booked",
+      variant: "white",
+    },
+    {
+      title: "Canceled",
+      count: `${sumCancled(dataBooking)}`,
+      notes: "request has been cancel",
+      variant: "white",
+    },
+    {
+      title: "Success Average",
+      count: `${rateSuccess(dataBooking) | 0}%`,
+      notes: "total request room",
+      variant: "white",
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-8">
@@ -25,48 +71,48 @@ export default function DashboarAdminPage() {
       </div>
 
       <div className="flex gap-4">
-        {dataDummyDashboard.map((data) => (
-          <div
-            key={data.title}
-            className="w-full p-4 flex flex-col h-28 justify-between rounded-2xl bg-white bg-no-repeat bg-center"
-            style={{
-              backgroundImage: data.title === "Total" ? `url(${bgCount})` : "",
-            }}
-          >
-            <h3
-              className="text-xl text-gray-600"
-              style={{
-                color: data.title === "Total" ? "white" : "",
-                opacity: data.title === "Total" ? "60%" : "100%",
-              }}
-            >
-              {data.title}
-            </h3>
-
-            <h1
-              className="text-4xl font-semibold text-red-700"
-              style={{
-                color: data.title === "Total" ? "white" : "",
-              }}
-            >
-              {data.total}
-            </h1>
-          </div>
+        {/* this is for header helper dashboard admind */}
+        {dataHeader.map((data) => (
+          <CounterCard
+            title={data.title}
+            count={data.count}
+            notes={data.notes}
+            variant={data.variant}
+          />
         ))}
       </div>
       <div className="flex gap-4">
-        <ChartAdmin />
-        <div
-          className="flex flex-col items-center gap-8 justify-center rounded-3xl bg-no-repeat bg-center bg-cover w-1/3"
-          style={{ backgroundImage: `url(${bgDownload})` }}
-        >
-          <h1 className="font-medium text-2xl w-3/4 text-center text-white">
-            Klik Tombol Untuk Unduh Report pengguna ruang meeting
-          </h1>
-
-          <Button size="lg" variant="ghost">
-            Unduh Report
-          </Button>
+        <ChartAdmin booking={dataBooking} />
+        <div className="flex flex-col w-1/3 gap-4">
+          <ChartDoughnuts booking={dataBooking} />
+          <div
+            className=" w-full h-1/2 flex flex-col p-4 gap-2 items-center justify-center rounded-3xl bg-no-repeat bg-center bg-cover shadow-lg shadow-[#f0f0f0]"
+            style={{ backgroundImage: `url(${bgDownload})` }}
+          >
+            <h1 className="flex text-white text-lg font-medium text-center">
+              Download File Reports of Requested Room
+            </h1>
+            <div className="flex flex-row w-full gap-2">
+              <Button
+                size="md"
+                variant="primary"
+                onClick={exportService.pdf}
+                className="gap-1 w-full"
+              >
+                <FileText size={16} />
+                PDF
+              </Button>
+              <Button
+                size="md"
+                variant="ghost"
+                onClick={exportService.excel}
+                className="gap-1 w-full"
+              >
+                <FileSignature size={16} />
+                Xls
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
