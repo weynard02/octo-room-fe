@@ -1,86 +1,14 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button, Card, DashboardHeader, ModalAlert } from "../../components";
 import { formatDateKey } from "../../helpers/dataFormatter";
-import { statusStyles } from "./status";
 import bookingService, { type Booking } from "../../services/bookingService";
 import {
   type ModalAlertState,
   initialModalAlertState,
 } from "../../types/ModalState";
-import formattedDate from "../../utils/dateSetting";
-import { getEffectiveStatus } from "../../utils/bookingUtils";
 import authService from "../../services/authService";
 import { AdminHeader } from "../../components/AdminHeader";
-
-const BookingCard: React.FC<{
-  booking: Booking;
-  isAdmin: boolean;
-  onCancelRequest: (booking: Booking) => void;
-}> = ({ booking, isAdmin, onCancelRequest }) => {
-  const navigate = useNavigate();
-  const effectiveStatus = getEffectiveStatus(booking);
-
-  return (
-    <Card className="w-full p-4">
-      <div className="flex justify-between items-center">
-        <div className="space-y-1">
-          <p className="font-semibold">
-            Room:{" "}
-            {typeof booking.room === "string"
-              ? booking.room
-              : booking.room?.name || "Unknown"}
-          </p>
-          <p className="text-gray-500 text-sm">
-            Date: {formattedDate(booking.date)}{" "}
-          </p>
-          <p className="text-gray-500 text-sm">
-            Time: {""}
-            {booking.slots?.[0]?.start_hour || "N/A"} -{" "}
-            {booking.slots?.[0]?.end_hour || "N/A"}
-          </p>
-          {isAdmin && (
-            <p className="text-gray-500 text-sm">
-              Customer Email: {booking.customer_email || "N/A"}
-            </p>
-          )}
-        </div>
-        <div className="space-y-1 flex flex-col items-center gap-2">
-          <span
-            className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${
-              statusStyles[effectiveStatus] || "bg-gray-100 text-gray-800"
-            }`}
-          >
-            {effectiveStatus}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full"
-            onClick={() =>
-              navigate(`/my-booking/${booking.booking_id}`, {
-                state: { booking },
-              })
-            }
-          >
-            View Details
-          </Button>
-          {effectiveStatus !== "cancelled" &&
-            effectiveStatus !== "completed" && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full text-red-600 border-red-400 hover:bg-red-50"
-                onClick={() => onCancelRequest(booking)}
-              >
-                Cancel Booking
-              </Button>
-            )}
-        </div>
-      </div>
-    </Card>
-  );
-};
+import { BookingCard } from "../../components/BookingCard";
 
 export const MyBookingPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(
@@ -158,7 +86,11 @@ export const MyBookingPage: React.FC = () => {
     try {
       await bookingService.cancelBooking(bookingId);
       showAlert("Success", "Booking cancelled successfully.");
-      await fetchBookings();
+      setAllBookings((prev) =>
+        prev.map((b) =>
+          b.booking_id === bookingId ? { ...b, status: "cancelled" } : b
+        )
+      );
     } catch (err) {
       console.error("Failed to cancel booking:", err);
       showAlert("Error", "Failed to cancel booking. Please try again.");
@@ -182,11 +114,13 @@ export const MyBookingPage: React.FC = () => {
   return (
     <div className="space-y-4 p-6">
       {isAdmin ? (
-        <AdminHeader
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          totalBookings={allBookings.length}
-        />
+        <>
+          <AdminHeader
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            totalBookings={allBookings.length}
+          />
+        </>
       ) : (
         <DashboardHeader
           selectedDate={selectedDate}
