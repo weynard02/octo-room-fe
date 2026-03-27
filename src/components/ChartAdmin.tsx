@@ -65,21 +65,21 @@ export default function ChartAdmin({ booking }: ChartBookingType) {
       {
         label: "Total",
         data: monthlyData,
-        backgroundColor: "rgba(255, 242, 225, 1)",
+        backgroundColor: "rgba(255, 242, 225, 0.8)",
         borderColor: "rgba(255, 191, 15, 1)",
         borderWidth: 1,
       },
       {
         label: "Success",
         data: bookedPerMonth,
-        backgroundColor: "rgba(244, 255, 237, 1)",
+        backgroundColor: "rgba(244, 255, 237, 0.8)",
         borderColor: "rgba(82, 192, 62, 1)",
         borderWidth: 1,
       },
       {
         label: "Canceled",
         data: cancelPerMonth,
-        backgroundColor: "rgba(255, 225, 225, 1)",
+        backgroundColor: "rgba(255, 225, 225, 0.8)",
         borderColor: "rgba(185, 22, 22, 0.8)",
         borderWidth: 1,
       },
@@ -91,12 +91,16 @@ export default function ChartAdmin({ booking }: ChartBookingType) {
       <Bar
         data={dataAdmin}
         options={{
+          responsive: true,
           plugins: {
-            legend: { position: "top" },
+            legend: {
+              position: "top",
+              labels: { boxHeight: 12, boxWidth: 12 },
+            },
             title: {
               display: true,
               text: "Request Room Meeting Monthly",
-              color: "#212121",
+              color: "#800",
               padding: { top: 4, bottom: 12 },
               font: { size: 24 },
             },

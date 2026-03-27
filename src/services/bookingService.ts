@@ -16,7 +16,7 @@ export interface Booking {
   id: string;
   status: string;
   date: string;
-  room: string | { room_id: string; name: string; floor: number };
+  room: { room_id: string; name: string; floor: number };
   booking_id: string;
   room_id?: string;
   user_id?: string;

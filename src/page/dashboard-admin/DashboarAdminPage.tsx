@@ -15,6 +15,7 @@ import {
   sumCancled,
   sumSuccess,
 } from "../../utils/dashboardSummary";
+import ChartDoughnuts from "../../components/DoughnutCharts";
 
 export default function DashboarAdminPage() {
   const [dataBooking, setDataBooking] = useState<Booking[]>([]);
@@ -82,32 +83,35 @@ export default function DashboarAdminPage() {
       </div>
       <div className="flex gap-4">
         <ChartAdmin booking={dataBooking} />
-        <div
-          className="flex flex-col items-center gap-8 justify-center rounded-3xl bg-no-repeat bg-center bg-cover w-1/3 shadow-lg shadow-[#f0f0f0]"
-          style={{ backgroundImage: `url(${bgDownload})` }}
-        >
-          <h1 className="font-medium text-2xl w-3/4 text-center text-white">
-            Pilih atau Ketik Tombol Unduh file report seseuai dengan kebutuhan
-          </h1>
-          <div className="flex flex-col gap-2">
-            <Button
-              size="lg"
-              variant="primary"
-              onClick={exportService.pdf}
-              className="gap-1"
-            >
-              <FileText size={16} />
-              Report PDF
-            </Button>
-            <Button
-              size="lg"
-              variant="ghost"
-              onClick={exportService.excel}
-              className="gap-1"
-            >
-              <FileSignature size={16} />
-              Report Xls
-            </Button>
+        <div className="flex flex-col w-1/3 gap-4">
+          <ChartDoughnuts booking={dataBooking} />
+          <div
+            className=" w-full h-2/6 flex flex-col py-4 gap-8 items-center justify-center rounded-3xl bg-no-repeat bg-center bg-cover shadow-lg shadow-[#f0f0f0]"
+            style={{ backgroundImage: `url(${bgDownload})` }}
+          >
+            <h1 className="flex text-white text-2xl font-medium text-center">
+              Download Report File Ruangan Meeting
+            </h1>
+            <div className="flex  w-full px-8 gap-2">
+              <Button
+                size="lg"
+                variant="primary"
+                onClick={exportService.pdf}
+                className="gap-1"
+              >
+                <FileText size={16} />
+                Report PDF
+              </Button>
+              <Button
+                size="lg"
+                variant="ghost"
+                onClick={exportService.excel}
+                className="gap-1"
+              >
+                <FileSignature size={16} />
+                Report Xls
+              </Button>
+            </div>
           </div>
         </div>
       </div>

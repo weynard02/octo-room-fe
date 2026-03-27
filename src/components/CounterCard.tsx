@@ -31,7 +31,7 @@ export default function CounterCard({
       </h3>
       <div>
         <h1
-          className="text-4xl font-semibold text-red-700"
+          className="text-4xl font-semibold text-[#800]"
           style={{
             color: variant === "red" ? "white" : "",
           }}
