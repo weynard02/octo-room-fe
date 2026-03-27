@@ -40,6 +40,8 @@ const exportService = {
       a.href = url;
       a.download = "report-booking.xlsx";
       a.click();
+
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.log("Export Excel Error: ", error);
     }

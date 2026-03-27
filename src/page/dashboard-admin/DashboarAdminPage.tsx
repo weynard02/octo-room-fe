@@ -2,20 +2,64 @@ import ChartAdmin from "../../components/ChartAdmin";
 import { Button } from "../../components";
 import authService from "../../services/authService";
 
-import bgCount from "../../assets/background/Bg-Hero-Count.png";
 import bgDownload from "../../assets/background/Bg-Download.png";
 import exportService from "../../services/exportService";
-import { Download, File, FileSignature, FileText } from "lucide-react";
+import { FileSignature, FileText } from "lucide-react";
+import bookingService, { type Booking } from "../../services/bookingService";
+import { useEffect, useState } from "react";
+import CounterCard, {
+  type CounterCardType,
+} from "../../components/CounterCard";
+import {
+  rateSuccess,
+  sumCancled,
+  sumSuccess,
+} from "../../utils/dashboardSummary";
 
 export default function DashboarAdminPage() {
-  const dataDummyDashboard = [
-    { title: "Total", total: 644, notes: "Total dari semua Request" },
-    { title: "Average", total: 108, notes: "Rata-rata Request Bulan ini" },
-    { title: "Completed", total: 602, notes: "Total Request Bulan ini" },
-    { title: "Cancel", total: 42, notes: "Total Pembatal Request Bulan ini" },
-  ];
+  const [dataBooking, setDataBooking] = useState<Booking[]>([]);
 
   const user = authService.getUser();
+
+  useEffect(() => {
+    const fetchingData = async () => {
+      const res = await bookingService.getAllBookings();
+
+      const resDataBooking = res.data;
+      setDataBooking(resDataBooking);
+    };
+
+    fetchingData();
+    console.log("ini data bookingnya: ", dataBooking);
+  }, []);
+
+  const dataHeader: CounterCardType[] = [
+    {
+      title: "Total",
+      count: `${dataBooking.length}`,
+      notes: "total request room",
+      variant: "red",
+    },
+    {
+      title: "Completed",
+      count: `${sumSuccess(dataBooking)}`,
+      notes: "room has been booked",
+      variant: "white",
+    },
+    {
+      title: "Canceled",
+      count: `${sumCancled(dataBooking)}`,
+      notes: "request has been cancel",
+      variant: "white",
+    },
+    {
+      title: "Success Average",
+      count: `${rateSuccess(dataBooking) | 0}%`,
+      notes: "total request room",
+      variant: "white",
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-8">
       <div>
@@ -26,44 +70,18 @@ export default function DashboarAdminPage() {
       </div>
 
       <div className="flex gap-4">
-        {dataDummyDashboard.map((data) => (
-          <div
-            key={data.title}
-            className="w-full p-4 flex flex-col h-fit justify-center rounded-2xl bg-white bg-no-repeat bg-center shadow-lg shadow-[#f0f0f0] gap-4"
-            style={{
-              backgroundImage: data.title === "Total" ? `url(${bgCount})` : "",
-            }}
-          >
-            <h3
-              className="text-xl text-gray-600"
-              style={{
-                color: data.title === "Total" ? "white" : "",
-                opacity: data.title === "Total" ? "60%" : "100%",
-              }}
-            >
-              {data.title}
-            </h3>
-            <div>
-              <h1
-                className="text-4xl font-semibold text-red-700"
-                style={{
-                  color: data.title === "Total" ? "white" : "",
-                }}
-              >
-                {data.total}
-              </h1>
-              <p
-                className="font-light text-xs text-gray-800 opacity-50"
-                style={{ color: data.title === "Total" ? "white" : "" }}
-              >
-                {data.notes}
-              </p>
-            </div>
-          </div>
+        {/* this is for header helper dashboard admind */}
+        {dataHeader.map((data) => (
+          <CounterCard
+            title={data.title}
+            count={data.count}
+            notes={data.notes}
+            variant={data.variant}
+          />
         ))}
       </div>
       <div className="flex gap-4">
-        <ChartAdmin />
+        <ChartAdmin booking={dataBooking} />
         <div
           className="flex flex-col items-center gap-8 justify-center rounded-3xl bg-no-repeat bg-center bg-cover w-1/3 shadow-lg shadow-[#f0f0f0]"
           style={{ backgroundImage: `url(${bgDownload})` }}

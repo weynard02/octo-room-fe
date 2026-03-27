@@ -40,7 +40,7 @@ const bookingService = {
    * Requires authentication.
    */
   createBooking: async (
-    data: CreateBookingRequest
+    data: CreateBookingRequest,
   ): Promise<ApiResponse<Booking>> => {
     const response = await api.post<ApiResponse<Booking>>("/bookings", data);
     return response.data;
@@ -62,7 +62,7 @@ const bookingService = {
    * Requires authentication.
    */
   getAllBookings: async (
-    params?: GetAllBookingsParams
+    params?: GetAllBookingsParams,
   ): Promise<ApiResponse<Booking[]>> => {
     const response = await api.get<ApiResponse<Booking[]>>("/bookings/all", {
       params,
@@ -76,10 +76,10 @@ const bookingService = {
    * Requires authentication.
    */
   getBookingDetail: async (
-    bookingId: string
+    bookingId: string,
   ): Promise<ApiResponse<Booking>> => {
     const response = await api.get<ApiResponse<Booking>>(
-      `/bookings/${bookingId}`
+      `/bookings/${bookingId}`,
     );
     return response.data;
   },
@@ -91,7 +91,7 @@ const bookingService = {
    */
   cancelBooking: async (bookingId: string): Promise<ApiResponse<Booking>> => {
     const response = await api.patch<ApiResponse<Booking>>(
-      `/bookings/${bookingId}/cancel`
+      `/bookings/${bookingId}/cancel`,
     );
     return response.data;
   },
