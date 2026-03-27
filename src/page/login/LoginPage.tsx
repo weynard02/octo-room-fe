@@ -33,7 +33,12 @@ const LoginPage: React.FC = () => {
       );
     } finally {
       setLoading(false);
-      navigate("dashboard");
+      const user = authService.getUser();
+      if (user?.isAdmin) {
+        navigate("/dashboard-admin");
+      } else {
+        navigate("/dashboard");
+      }
     }
   };
 
