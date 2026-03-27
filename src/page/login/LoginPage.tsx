@@ -25,6 +25,14 @@ const LoginPage: React.FC = () => {
 
     try {
       await authService.login(formData);
+
+      const user = authService.getUser();
+
+      if (user?.isAdmin) {
+        navigate("/dashboard-admin");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       setError(
@@ -33,12 +41,6 @@ const LoginPage: React.FC = () => {
       );
     } finally {
       setLoading(false);
-      const user = authService.getUser();
-      if (user?.isAdmin) {
-        navigate("/dashboard-admin");
-      } else {
-        navigate("/dashboard");
-      }
     }
   };
 
