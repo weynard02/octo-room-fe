@@ -86,30 +86,30 @@ export default function DashboarAdminPage() {
         <div className="flex flex-col w-1/3 gap-4">
           <ChartDoughnuts booking={dataBooking} />
           <div
-            className=" w-full h-2/6 flex flex-col py-4 gap-8 items-center justify-center rounded-3xl bg-no-repeat bg-center bg-cover shadow-lg shadow-[#f0f0f0]"
+            className=" w-full h-1/2 flex flex-col p-4 gap-2 items-center justify-center rounded-3xl bg-no-repeat bg-center bg-cover shadow-lg shadow-[#f0f0f0]"
             style={{ backgroundImage: `url(${bgDownload})` }}
           >
-            <h1 className="flex text-white text-2xl font-medium text-center">
-              Download Report File Ruangan Meeting
+            <h1 className="flex text-white text-lg font-medium text-center">
+              Download File Reports of Requested Room
             </h1>
-            <div className="flex  w-full px-8 gap-2">
+            <div className="flex flex-row w-full gap-2">
               <Button
-                size="lg"
+                size="md"
                 variant="primary"
                 onClick={exportService.pdf}
-                className="gap-1"
+                className="gap-1 w-full"
               >
                 <FileText size={16} />
-                Report PDF
+                PDF
               </Button>
               <Button
-                size="lg"
+                size="md"
                 variant="ghost"
                 onClick={exportService.excel}
-                className="gap-1"
+                className="gap-1 w-full"
               >
                 <FileSignature size={16} />
-                Report Xls
+                Xls
               </Button>
             </div>
           </div>

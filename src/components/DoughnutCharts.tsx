@@ -50,7 +50,7 @@ export default function ChartDoughnuts({ booking }: ChartDoughnutsProps) {
   };
 
   return (
-    <div className="flex w-full h-3/4 bg-white items-center justify-between rounded-3xl shadow-lg shadow-[#f0f0f0]">
+    <div className="flex w-full h-full bg-white items-center justify-between rounded-3xl shadow-lg shadow-[#f0f0f0]">
       <Doughnut
         data={dataChart}
         options={{
@@ -79,7 +79,7 @@ export default function ChartDoughnuts({ booking }: ChartDoughnutsProps) {
             },
             title: {
               display: true,
-              text: "Booking per Ruangan",
+              text: "Most Room Requested",
               color: "#800",
               padding: { top: 4, bottom: 12 },
               font: { size: 24 },
