@@ -17,16 +17,16 @@ import {
 
 const menuItems = [
   {
-    icon: KanbanSquare,
-    label: "Admin Dashboard",
-    path: "/dashboard-admin",
-    adminOnly: true,
-  },
-  {
     icon: LayoutDashboard,
     label: "Home Page",
     path: "/dashboard",
     adminOnly: false,
+  },
+  {
+    icon: KanbanSquare,
+    label: "Admin Dashboard",
+    path: "/dashboard-admin",
+    adminOnly: true,
   },
   {
     icon: BookCheck,
