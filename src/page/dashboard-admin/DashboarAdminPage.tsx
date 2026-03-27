@@ -16,23 +16,26 @@ import {
   sumSuccess,
 } from "../../utils/dashboardSummary";
 import ChartDoughnuts from "../../components/DoughnutCharts";
+import { useNavigate } from "react-router-dom";
 
 export default function DashboarAdminPage() {
   const [dataBooking, setDataBooking] = useState<Booking[]>([]);
-
+  const navigate = useNavigate();
   const user = authService.getUser();
 
   useEffect(() => {
     const fetchingData = async () => {
+      if (!user?.isAdmin) {
+        navigate("/", { replace: true });
+        return;
+      }
       const res = await bookingService.getAllBookings();
-
       const resDataBooking = res.data;
       setDataBooking(resDataBooking);
     };
-
     fetchingData();
     console.log("ini data bookingnya: ", dataBooking);
-  }, []);
+  }, [navigate]);
 
   const dataHeader: CounterCardType[] = [
     {
@@ -64,7 +67,9 @@ export default function DashboarAdminPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <p className="text-xl text-gray-400">{`Hello, ${user?.name}!`} </p>
+        <p className="text-xl text-gray-400">
+          {`Hello, ${user?.name || `Admin!`} `}
+        </p>
         <h1 className="text-3xl text-gray-700 font-semibold">
           Welcome to Dashboard
         </h1>
