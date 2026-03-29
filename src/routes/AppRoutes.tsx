@@ -4,6 +4,7 @@ import { MyBookingPage } from "../page/my-booking/MyBookingPage";
 import MakeAppointmentPage from "../page/make-appointment/MakeAppointmentPage";
 import { MyBookingDetailPage } from "../page/my-booking/[id]/MyBookingDetailPage";
 import { initialAppointment } from "../types/Appointment";
+import CreateRoomPage from "../page/create-room/CreateRoomPage";
 
 export default function AppRoutes() {
   const navigate = useNavigate()
@@ -13,6 +14,7 @@ export default function AppRoutes() {
       <Route path="/my-booking" element={<MyBookingPage />} />
       <Route path="/my-booking/:id" element={<MyBookingDetailPage />} />
       <Route path="/make-appointment" element={<MakeAppointmentPage formInfo={initialAppointment} onClick={() => navigate("/dashboard")} />} />
+      <Route path="/create-room" element={<CreateRoomPage />} />
     </Routes>
   );
 }
