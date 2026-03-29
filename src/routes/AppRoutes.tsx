@@ -7,7 +7,7 @@ import { initialAppointment } from "../types/Appointment";
 import DashboarAdminPage from "../page/dashboard-admin/DashboarAdminPage";
 import { AllBookingsPage } from "../page/bookings-admin/AllBookingsPage";
 import CreateRoomPage from "../page/create-room/CreateRoomPage";
-import CreateRoomTypePage from "../page/create-room-type/CreateRoomType";
+import CreateRoomTypePage from "../page/create-room-type/CreateRoomTypePage";
 import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRoutes() {

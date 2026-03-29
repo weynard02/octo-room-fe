@@ -135,6 +135,7 @@ export default function CreateRoomPage() {
               </div>
             </div>
             <Button
+              className="bg-red-600 hover:bg-red-700 duration-200"
               onClick={() => handleSubmit()}
               disabled={submitting}
             >
