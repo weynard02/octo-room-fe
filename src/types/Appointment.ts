@@ -4,12 +4,14 @@ export default interface AppointmentType {
   timeStart: string;
   timeEnd: string;
   notes?: string;
+  customer_email?: string;
 }
 
 export const initialAppointment: AppointmentType = {
   room: "",
-  date: '',
-  timeStart: '',
-  timeEnd: '',
-  notes: ''
-}
+  date: "",
+  timeStart: "",
+  timeEnd: "",
+  notes: "",
+  customer_email: "",
+};

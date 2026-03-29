@@ -9,19 +9,28 @@ export interface CreateBookingRequest {
   room_id: string;
   date: string; // "YYYY-MM-DD"
   slots: BookingSlot[];
+  customer_email?: string;
 }
 
 export interface Booking {
   id: string;
   status: string;
   date: string;
-  room: string | { room_id: string; name: string; floor: number };
+  room: { room_id: string; name: string; floor: number };
   booking_id: string;
   room_id?: string;
   user_id?: string;
   slots?: BookingSlot[];
   created_at?: string;
   updated_at?: string;
+  customer_email?: string;
+}
+
+export interface GetAllBookingsParams {
+  room_type_id?: string;
+  year?: number | string;
+  room_id?: string;
+  month?: number | string;
 }
 
 const bookingService = {
@@ -31,7 +40,7 @@ const bookingService = {
    * Requires authentication.
    */
   createBooking: async (
-    data: CreateBookingRequest
+    data: CreateBookingRequest,
   ): Promise<ApiResponse<Booking>> => {
     const response = await api.post<ApiResponse<Booking>>("/bookings", data);
     return response.data;
@@ -48,15 +57,29 @@ const bookingService = {
   },
 
   /**
+   * List all bookings (only for admin access).
+   * GET /api/bookings/all
+   * Requires authentication.
+   */
+  getAllBookings: async (
+    params?: GetAllBookingsParams,
+  ): Promise<ApiResponse<Booking[]>> => {
+    const response = await api.get<ApiResponse<Booking[]>>("/bookings/all", {
+      params,
+    });
+    return response.data;
+  },
+
+  /**
    * Retrieve details of a specific booking.
    * GET /api/bookings/:booking_id
    * Requires authentication.
    */
   getBookingDetail: async (
-    bookingId: string
+    bookingId: string,
   ): Promise<ApiResponse<Booking>> => {
     const response = await api.get<ApiResponse<Booking>>(
-      `/bookings/${bookingId}`
+      `/bookings/${bookingId}`,
     );
     return response.data;
   },
@@ -68,7 +91,7 @@ const bookingService = {
    */
   cancelBooking: async (bookingId: string): Promise<ApiResponse<Booking>> => {
     const response = await api.patch<ApiResponse<Booking>>(
-      `/bookings/${bookingId}/cancel`
+      `/bookings/${bookingId}/cancel`,
     );
     return response.data;
   },

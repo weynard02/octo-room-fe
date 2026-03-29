@@ -30,7 +30,7 @@ api.interceptors.request.use(
   (error) => {
     console.error("[API Request Error]", error);
     return Promise.reject(error);
-  },
+  }
 );
 
 // Response interceptor for handling errors and logging
@@ -53,7 +53,7 @@ api.interceptors.response.use(
       // window.location.href = "/";
     }
     return Promise.reject(error);
-  },
+  }
 );
 
 export default api;

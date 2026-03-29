@@ -6,6 +6,7 @@ import {
   ChevronRight,
   BookCheck,
   LogOut,
+  KanbanSquare,
 } from "lucide-react";
 import authService from "../services/authService";
 import { ModalAlert } from "./ModalAlert";
@@ -15,8 +16,24 @@ import {
 } from "../types/ModalState";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Home Page", path: "/dashboard" },
-  { icon: BookCheck, label: "My Booking", path: "/my-booking" },
+  {
+    icon: LayoutDashboard,
+    label: "Home Page",
+    path: "/dashboard",
+    adminOnly: false,
+  },
+  {
+    icon: KanbanSquare,
+    label: "Admin Dashboard",
+    path: "/dashboard-admin",
+    adminOnly: true,
+  },
+  {
+    icon: BookCheck,
+    label: "My Booking",
+    path: "/my-booking",
+    adminOnly: false,
+  },
 ];
 
 interface SidebarProps {
@@ -83,56 +100,58 @@ export const Sidebar = ({ children }: SidebarProps) => {
 
         {/* Nav */}
         <nav className="flex-1 py-3 flex flex-row md:flex-col w-full md:gap-0.5">
-          {menuItems.map(({ icon: Icon, label, path }) => {
-            const isActive = location.pathname === path;
-            return (
-              <Link
-                key={label}
-                to={path}
-                title={collapsed ? label : ""}
-                className={`no-underline border-b-2 md:border-l-2 md:border-b-0 cursor-pointer flex flex-col md:flex-row items-center gap-1 md:gap-3 w-full transition-all duration-150 whitespace-nowrap ${
-                  isActive
-                    ? "bg-red-50 border-red-600 text-red-600"
-                    : "bg-none border-transparent text-gray-600 hover:bg-gray-50 hover:text-red-600"
-                } ${
-                  collapsed
-                    ? "py-2 md:py-[11px] justify-center"
-                    : "py-2 md:py-[11px] md:px-5 justify-start"
-                }`}
-              >
-                <Icon
-                  size={17}
-                  strokeWidth={isActive ? 2 : 1.6}
-                  className="shrink-0"
-                />
-                {!collapsed && (
-                  <span
-                    className={`text-[11px] md:text-[13px] tracking-[0.01em] ${
-                      isActive ? "font-medium" : "font-normal"
-                    }`}
-                  >
-                    {label}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
+          {menuItems
+            .filter((item) => !item.adminOnly || user?.isAdmin)
+            .map(({ icon: Icon, label, path }) => {
+              const isActive = location.pathname === path;
+              return (
+                <Link
+                  key={label}
+                  to={path}
+                  title={collapsed ? label : ""}
+                  className={`no-underline border-l-2 cursor-pointer flex flex-col md:flex-row items-center md:gap-3 w-full transition-all duration-150 whitespace-nowrap ${
+                    isActive
+                      ? "bg-red-50 border-red-600 text-red-600"
+                      : "bg-none border-transparent text-gray-600 hover:bg-gray-50 hover:text-red-600"
+                  } ${
+                    collapsed
+                      ? "py-1 md:py-[11px] justify-center"
+                      : "py-1 md:py-[11px] md:px-5 justify-start"
+                  }`}
+                >
+                  <Icon
+                    size={17}
+                    strokeWidth={isActive ? 2 : 1.6}
+                    className="shrink-0"
+                  />
+                  {!collapsed && (
+                    <span
+                      className={`text-[11px] md:text-[13px] tracking-[0.01em] ${
+                        isActive ? "font-medium" : "font-normal"
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
         </nav>
 
         {/* User & Settings */}
         <div className="md:w-full md:mt-auto md:border-t md:border-gray-100">
           <div
-            className={`flex flex-row p-4 items-center ${
+            className={`flex flex-row p-4 ${
               collapsed ? "justify-center " : "px-5 justify-between"
             }`}
           >
-            <div className="flex flex-col md:flex-row items-center md:gap-[10px]">
-              <div className="flex w-[20px] h-[20px] md:w-[30px] md:h-[30px] rounded-full bg-gray-100 border border-gray-200  items-center justify-center text-gray-600 text-[8px] md:text-[12px] shrink-0 font-medium">
+            <div className="flex flex-row items-center gap-[10px]">
+              <div className="w-[30px] h-[30px] rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 text-[12px] shrink-0 font-medium">
                 {initials}
               </div>
               {!collapsed && (
-                <div className="md:flex flex-col min-w-0">
-                  <span className="text-gray-800 text-[10px] md:text-[12px] font-medium leading-none truncate">
+                <div className="hidden md:flex flex-col min-w-0">
+                  <span className="text-gray-800 text-[12px] font-medium leading-none truncate">
                     {user?.name || "Anonymous"}
                   </span>
                   <span className="hidden md:block text-gray-500 text-[10px] mt-1 leading-none">
