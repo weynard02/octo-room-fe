@@ -18,6 +18,11 @@ export interface RoomType {
   capacity: number;
 }
 
+export interface CreateRoomType {
+  name: string;
+  capacity: number
+}
+
 export interface BookedSlot {
   start_hour: string;
   end_hour: string;
@@ -63,6 +68,16 @@ const roomService = {
   */
   getRoomTypes: async (): Promise<ApiResponse<RoomType[]>> => {
     const response = await api.get<ApiResponse<RoomType[]>>("/room-types");
+    return response.data;
+  },
+
+  /* 
+    Create a new room type.
+    POST /api/room-types
+    Requires authentication.
+  */
+  createRoomType: async (data: CreateRoomType): Promise<ApiResponse<RoomType>> => {
+    const response = await api.post<ApiResponse<RoomType>>("/room-types", data);
     return response.data;
   },
 

@@ -7,6 +7,7 @@ import { initialAppointment } from "../types/Appointment";
 import DashboarAdminPage from "../page/dashboard-admin/DashboarAdminPage";
 import { AllBookingsPage } from "../page/bookings-admin/AllBookingsPage";
 import CreateRoomPage from "../page/create-room/CreateRoomPage";
+import CreateRoomTypePage from "../page/create-room-type/CreateRoomType";
 
 export default function AppRoutes() {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function AppRoutes() {
         }
       />
       <Route path="/create-room" element={<CreateRoomPage />} />
+      <Route path="/create-room-type" element={<CreateRoomTypePage />} />
     </Routes>
   );
 }
