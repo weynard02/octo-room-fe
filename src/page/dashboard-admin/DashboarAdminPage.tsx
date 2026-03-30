@@ -17,7 +17,7 @@ import {
 } from "../../utils/dashboardSummary";
 import ChartDoughnuts from "../../components/DoughnutCharts";
 import { useNavigate } from "react-router-dom";
-import SkeletonHeaderCard from "../../components/Skeleton";
+import SkeletonAdminDashboard from "../../components/Skeleton";
 
 export default function DashboarAdminPage() {
   const [dataBooking, setDataBooking] = useState<Booking[]>([]);
@@ -84,12 +84,11 @@ export default function DashboarAdminPage() {
         </h1>
       </div>
 
-      <div className="flex gap-4">
-        {/* this is for header helper dashboard admind */}
-        {isLoading ? (
-          <SkeletonHeaderCard />
-        ) : (
-          <>
+      {isLoading ? (
+        <SkeletonAdminDashboard />
+      ) : (
+        <div className="flex flex-col gap-4 ease-in-out">
+          <div className="flex gap-4">
             {dataHeader.map((data) => (
               <CounterCard
                 title={data.title}
@@ -98,43 +97,43 @@ export default function DashboarAdminPage() {
                 variant={data.variant}
               />
             ))}
-          </>
-        )}
-      </div>
-      <div className="flex gap-4">
-        <ChartAdmin booking={dataBooking} />
-        <div className="flex flex-col w-1/3 gap-4">
-          <ChartDoughnuts booking={dataBooking} />
-          <div
-            className=" w-full h-1/2 flex flex-col p-4 gap-2 items-center justify-center rounded-3xl bg-no-repeat bg-center bg-cover shadow-lg shadow-[#f0f0f0]"
-            style={{ backgroundImage: `url(${bgDownload})` }}
-          >
-            <h1 className="flex text-white text-lg font-medium text-center">
-              Download File Reports of Requested Room
-            </h1>
-            <div className="flex flex-row w-full gap-2">
-              <Button
-                size="md"
-                variant="primary"
-                onClick={exportService.pdf}
-                className="gap-1 w-full"
+          </div>
+          <div className="flex gap-4">
+            <ChartAdmin booking={dataBooking} />
+            <div className="flex flex-col w-1/3 gap-4">
+              <ChartDoughnuts booking={dataBooking} />
+              <div
+                className=" w-full h-1/2 flex flex-col p-4 gap-2 items-center justify-center rounded-3xl bg-no-repeat bg-center bg-cover shadow-lg shadow-[#f0f0f0]"
+                style={{ backgroundImage: `url(${bgDownload})` }}
               >
-                <FileText size={16} />
-                PDF
-              </Button>
-              <Button
-                size="md"
-                variant="ghost"
-                onClick={exportService.excel}
-                className="gap-1 w-full"
-              >
-                <FileSignature size={16} />
-                Xls
-              </Button>
+                <h1 className="flex text-white text-lg font-medium text-center">
+                  Download File Reports of Requested Room
+                </h1>
+                <div className="flex flex-row w-full gap-2">
+                  <Button
+                    size="md"
+                    variant="primary"
+                    onClick={exportService.pdf}
+                    className="gap-1 w-full"
+                  >
+                    <FileText size={16} />
+                    PDF
+                  </Button>
+                  <Button
+                    size="md"
+                    variant="ghost"
+                    onClick={exportService.excel}
+                    className="gap-1 w-full"
+                  >
+                    <FileSignature size={16} />
+                    Xls
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
