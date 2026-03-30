@@ -37,13 +37,22 @@ export function AdminHeader({
       </div>
 
       <div className="flex flex-col w-full items-end gap-2">
-        <Button
-          className="flex w-full md:w-fit items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded-lg  duration-200  cursor-pointer"
-          onClick={() => navigate("/make-appointment")}
-        >
-          <Plus size={16} />
-          Add Appoinment
-        </Button>
+        <div className="flex space-x-2">
+          <Button
+            className="flex w-full md:w-fit items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded-lg  duration-200  cursor-pointer"
+            onClick={() => navigate("/make-appointment")}
+          >
+            <Plus size={16} />
+            Add Appoinment
+          </Button>
+          <Button
+            className="flex w-full md:w-fit items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded-lg  duration-200  cursor-pointer"
+            onClick={() => navigate("/all-bookings")}
+          >
+            View All Bookings
+          </Button>
+        </div>
+
         <div className="flex w-full h-full md:w-fit items-center gap-2">
           <div className="flex flex-row min-h-full w-full h-full md:w-46 items-center gap-2 border bg-white border-gray-200 px-4 py-3 rounded-lg text-[12px] md:text-sm shadow-sm justify-between md:justify-start">
             <Calendar size={16} />
