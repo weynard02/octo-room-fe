@@ -17,24 +17,33 @@ import {
 } from "../../utils/dashboardSummary";
 import ChartDoughnuts from "../../components/DoughnutCharts";
 import { useNavigate } from "react-router-dom";
+import SkeletonAdminDashboard from "../../components/Skeleton";
 
 export default function DashboarAdminPage() {
   const [dataBooking, setDataBooking] = useState<Booking[]>([]);
   const navigate = useNavigate();
   const user = authService.getUser();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchingData = async () => {
-      if (!user?.isAdmin) {
-        navigate("/", { replace: true });
-        return;
+      try {
+        setIsLoading(true);
+        if (!user?.isAdmin) {
+          navigate("/", { replace: true });
+          return;
+        }
+        const res = await bookingService.getAllBookings();
+        const resDataBooking = res.data;
+        setDataBooking(resDataBooking);
+      } catch (error) {
+        console.log("error fetching data admin dashboard", error);
+      } finally {
+        setIsLoading(false);
       }
-      const res = await bookingService.getAllBookings();
-      const resDataBooking = res.data;
-      setDataBooking(resDataBooking);
     };
     fetchingData();
-    console.log("ini data bookingnya: ", dataBooking);
+    // console.log("ini data bookingnya: ", dataBooking);
   }, [navigate]);
 
   const dataHeader: CounterCardType[] = [
@@ -75,51 +84,56 @@ export default function DashboarAdminPage() {
         </h1>
       </div>
 
-      <div className="flex gap-4">
-        {/* this is for header helper dashboard admind */}
-        {dataHeader.map((data) => (
-          <CounterCard
-            title={data.title}
-            count={data.count}
-            notes={data.notes}
-            variant={data.variant}
-          />
-        ))}
-      </div>
-      <div className="flex gap-4">
-        <ChartAdmin booking={dataBooking} />
-        <div className="flex flex-col w-1/3 gap-4">
-          <ChartDoughnuts booking={dataBooking} />
-          <div
-            className=" w-full h-1/2 flex flex-col p-4 gap-2 items-center justify-center rounded-3xl bg-no-repeat bg-center bg-cover shadow-lg shadow-[#f0f0f0]"
-            style={{ backgroundImage: `url(${bgDownload})` }}
-          >
-            <h1 className="flex text-white text-lg font-medium text-center">
-              Download File Reports of Requested Room
-            </h1>
-            <div className="flex flex-row w-full gap-2">
-              <Button
-                size="md"
-                variant="primary"
-                onClick={exportService.pdf}
-                className="gap-1 w-full"
+      {isLoading ? (
+        <SkeletonAdminDashboard />
+      ) : (
+        <div className="flex flex-col gap-4 ease-in-out">
+          <div className="flex gap-4">
+            {dataHeader.map((data) => (
+              <CounterCard
+                title={data.title}
+                count={data.count}
+                notes={data.notes}
+                variant={data.variant}
+              />
+            ))}
+          </div>
+          <div className="flex gap-4">
+            <ChartAdmin booking={dataBooking} />
+            <div className="flex flex-col w-1/3 gap-4">
+              <ChartDoughnuts booking={dataBooking} />
+              <div
+                className=" w-full h-1/2 flex flex-col p-4 gap-2 items-center justify-center rounded-3xl bg-no-repeat bg-center bg-cover shadow-lg shadow-[#f0f0f0]"
+                style={{ backgroundImage: `url(${bgDownload})` }}
               >
-                <FileText size={16} />
-                PDF
-              </Button>
-              <Button
-                size="md"
-                variant="ghost"
-                onClick={exportService.excel}
-                className="gap-1 w-full"
-              >
-                <FileSignature size={16} />
-                Xls
-              </Button>
+                <h1 className="flex text-white text-lg font-medium text-center">
+                  Download File Reports of Requested Room
+                </h1>
+                <div className="flex flex-row w-full gap-2">
+                  <Button
+                    size="md"
+                    variant="primary"
+                    onClick={exportService.pdf}
+                    className="gap-1 w-full"
+                  >
+                    <FileText size={16} />
+                    PDF
+                  </Button>
+                  <Button
+                    size="md"
+                    variant="ghost"
+                    onClick={exportService.excel}
+                    className="gap-1 w-full"
+                  >
+                    <FileSignature size={16} />
+                    Xls
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
