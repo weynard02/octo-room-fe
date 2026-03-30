@@ -16,23 +16,35 @@ import {
   sumSuccess,
 } from "../../utils/dashboardSummary";
 import ChartDoughnuts from "../../components/DoughnutCharts";
+import { useNavigate } from "react-router-dom";
+import SkeletonHeaderCard from "../../components/Skeleton";
 
 export default function DashboarAdminPage() {
   const [dataBooking, setDataBooking] = useState<Booking[]>([]);
-
+  const navigate = useNavigate();
   const user = authService.getUser();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchingData = async () => {
-      const res = await bookingService.getAllBookings();
-
-      const resDataBooking = res.data;
-      setDataBooking(resDataBooking);
+      try {
+        setIsLoading(true);
+        if (!user?.isAdmin) {
+          navigate("/", { replace: true });
+          return;
+        }
+        const res = await bookingService.getAllBookings();
+        const resDataBooking = res.data;
+        setDataBooking(resDataBooking);
+      } catch (error) {
+        console.log("error fetching data admin dashboard", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-
     fetchingData();
-    console.log("ini data bookingnya: ", dataBooking);
-  }, []);
+    // console.log("ini data bookingnya: ", dataBooking);
+  }, [navigate]);
 
   const dataHeader: CounterCardType[] = [
     {
@@ -64,7 +76,9 @@ export default function DashboarAdminPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <p className="text-xl text-gray-400">{`Hello, ${user?.name}!`} </p>
+        <p className="text-xl text-gray-400">
+          {`Hello, ${user?.name || `Admin!`} `}
+        </p>
         <h1 className="text-3xl text-gray-700 font-semibold">
           Welcome to Dashboard
         </h1>
@@ -72,14 +86,20 @@ export default function DashboarAdminPage() {
 
       <div className="flex gap-4">
         {/* this is for header helper dashboard admind */}
-        {dataHeader.map((data) => (
-          <CounterCard
-            title={data.title}
-            count={data.count}
-            notes={data.notes}
-            variant={data.variant}
-          />
-        ))}
+        {isLoading ? (
+          <SkeletonHeaderCard />
+        ) : (
+          <>
+            {dataHeader.map((data) => (
+              <CounterCard
+                title={data.title}
+                count={data.count}
+                notes={data.notes}
+                variant={data.variant}
+              />
+            ))}
+          </>
+        )}
       </div>
       <div className="flex gap-4">
         <ChartAdmin booking={dataBooking} />
