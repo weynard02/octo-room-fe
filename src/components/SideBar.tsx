@@ -7,6 +7,7 @@ import {
   BookCheck,
   LogOut,
   KanbanSquare,
+  DoorClosed,
 } from "lucide-react";
 import authService from "../services/authService";
 import { ModalAlert } from "./ModalAlert";
@@ -17,22 +18,34 @@ import {
 
 const menuItems = [
   {
-    icon: KanbanSquare,
-    label: "Admin Dashboard",
-    path: "/dashboard-admin",
-    adminOnly: true,
-  },
-  {
     icon: LayoutDashboard,
     label: "Home Page",
     path: "/dashboard",
     adminOnly: false,
   },
   {
+    icon: KanbanSquare,
+    label: "Admin Dashboard",
+    path: "/dashboard-admin",
+    adminOnly: true,
+  },
+  {
     icon: BookCheck,
     label: "My Booking",
     path: "/my-booking",
     adminOnly: false,
+  },
+  {
+    icon: DoorClosed,
+    label: "Create Room",
+    path: "/create-room",
+    adminOnly: true,
+  },
+  {
+    icon: DoorClosed,
+    label: "Create Room Type",
+    path: "/create-room-type",
+    adminOnly: true,
   },
 ];
 
@@ -155,7 +168,7 @@ export const Sidebar = ({ children }: SidebarProps) => {
                     {user?.name || "Anonymous"}
                   </span>
                   <span className="hidden md:block text-gray-500 text-[10px] mt-1 leading-none">
-                    Member
+                    {user?.isAdmin ? "Admin" : "Member"}
                   </span>
                 </div>
               )}
