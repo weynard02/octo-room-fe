@@ -25,7 +25,7 @@ export function AdminHeader({
 
   return (
     <div className="flex flex-col md:flex-row justify-between items-center bg-linear-to-r from-red-500 to-black  shadow-sm border border-red-200 p-3 md:p-4 rounded-xl gap-2">
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full">
         <p className="text-md text-white font-bold">Admin Control Panel</p>
         <h2 className="font-semibold text-white">
           You have {totalBookings} booked{" "}

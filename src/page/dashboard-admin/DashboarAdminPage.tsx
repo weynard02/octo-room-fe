@@ -44,7 +44,7 @@ export default function DashboarAdminPage() {
     };
     fetchingData();
     // console.log("ini data bookingnya: ", dataBooking);
-  }, [navigate]);
+  }, [navigate, user?.isAdmin]);
 
   const dataHeader: CounterCardType[] = [
     {
