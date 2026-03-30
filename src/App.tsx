@@ -5,14 +5,7 @@ import AppRoutes from "./routes/AppRoutes";
 import LoginPage from "./page/login/LoginPage";
 import RegisterPage from "./page/register/RegisterPage";
 import { type ReactNode } from "react";
-
-const ProtectedRoute = ({ children }: { children: ReactNode }) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
-  return <>{children}</>;
-};
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 const PublicRoute = ({ children }: { children: ReactNode }) => {
   const token = localStorage.getItem("token");

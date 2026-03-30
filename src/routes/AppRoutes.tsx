@@ -6,12 +6,19 @@ import { MyBookingDetailPage } from "../page/my-booking/[id]/MyBookingDetailPage
 import { initialAppointment } from "../types/Appointment";
 import DashboarAdminPage from "../page/dashboard-admin/DashboarAdminPage";
 import { AllBookingsPage } from "../page/bookings-admin/AllBookingsPage";
+import CreateRoomPage from "../page/create-room/CreateRoomPage";
+import CreateRoomTypePage from "../page/create-room-type/CreateRoomTypePage";
+import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRoutes() {
   const navigate = useNavigate();
   return (
     <Routes>
-      <Route path="/dashboard-admin" element={<DashboarAdminPage />} />
+      <Route path="/dashboard-admin" element={
+        <ProtectedRoute adminOnly>
+          <DashboarAdminPage />
+        </ProtectedRoute>
+      } />
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/my-booking" element={<MyBookingPage />} />
       <Route path="/all-bookings" element={<AllBookingsPage />} />
@@ -25,6 +32,19 @@ export default function AppRoutes() {
           />
         }
       />
+      <Route
+        path="/create-room"
+        element={
+          <ProtectedRoute adminOnly>
+            <CreateRoomPage />
+          </ProtectedRoute>} />
+      <Route
+        path="/create-room-type"
+        element={
+          <ProtectedRoute adminOnly>
+            <CreateRoomTypePage />
+          </ProtectedRoute>
+        } />
     </Routes>
   );
 }
