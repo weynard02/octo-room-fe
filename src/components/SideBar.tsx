@@ -83,13 +83,15 @@ export const Sidebar = ({ children }: SidebarProps) => {
     <div className="flex flex-col md:flex-row h-screen bg-gray-50 font-sans">
       {/* Sidebar */}
       <div
-        className={`flex md:flex-col w-full md:w-fit h-fit md:h-full items-center md:items-start justify-between bg-white border-r border-gray-200 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden shrink-0 ${collapsed ? "w-[72px]" : "w-[240px]"
-          }`}
+        className={`flex md:flex-col w-full md:w-fit h-fit md:h-full items-center md:items-start justify-between bg-white border-r border-gray-200 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden shrink-0 ${
+          collapsed ? "w-[72px]" : "w-[240px]"
+        }`}
       >
         {/* Header */}
         <div
-          className={`flex items-center gap-3 border-b border-gray-100 ${collapsed ? "p-6 px-4 justify-center" : "p-6 px-5 justify-between"
-            }`}
+          className={`flex items-center gap-3 border-b border-gray-100 ${
+            collapsed ? "p-6 px-4 justify-center" : "p-6 px-5 justify-between"
+          }`}
         >
           {!collapsed && (
             <div className="flex items-center gap-[10px]">
@@ -120,13 +122,15 @@ export const Sidebar = ({ children }: SidebarProps) => {
                   key={label}
                   to={path}
                   title={collapsed ? label : ""}
-                  className={`no-underline border-l-2 cursor-pointer flex flex-col md:flex-row items-center md:gap-3 w-full transition-all duration-150 whitespace-nowrap ${isActive
-                    ? "bg-red-50 border-red-600 text-red-600"
-                    : "bg-none border-transparent text-gray-600 hover:bg-gray-50 hover:text-red-600"
-                    } ${collapsed
+                  className={`no-underline border-l-2 cursor-pointer flex flex-col md:flex-row items-center md:gap-3 w-full transition-all duration-150 whitespace-nowrap ${
+                    isActive
+                      ? "bg-red-50 border-red-600 text-red-600"
+                      : "bg-none border-transparent text-gray-600 hover:bg-gray-50 hover:text-red-600"
+                  } ${
+                    collapsed
                       ? "py-1 md:py-[11px] justify-center"
                       : "py-1 md:py-[11px] md:px-5 justify-start"
-                    }`}
+                  }`}
                 >
                   <Icon
                     size={17}
@@ -135,8 +139,9 @@ export const Sidebar = ({ children }: SidebarProps) => {
                   />
                   {!collapsed && (
                     <span
-                      className={`text-[11px] md:text-[13px] tracking-[0.01em] ${isActive ? "font-medium" : "font-normal"
-                        }`}
+                      className={`text-[11px] md:text-[13px] tracking-[0.01em] ${
+                        isActive ? "font-medium" : "font-normal"
+                      }`}
                     >
                       {label}
                     </span>
@@ -149,8 +154,9 @@ export const Sidebar = ({ children }: SidebarProps) => {
         {/* User & Settings */}
         <div className="md:w-full md:mt-auto md:border-t md:border-gray-100">
           <div
-            className={`flex flex-row p-4 ${collapsed ? "justify-center " : "px-5 justify-between"
-              }`}
+            className={`flex flex-row p-4 ${
+              collapsed ? "justify-center " : "px-5 justify-between"
+            }`}
           >
             <div className="flex flex-row items-center gap-[10px]">
               <div className="w-[30px] h-[30px] rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 text-[12px] shrink-0 font-medium">
@@ -162,7 +168,7 @@ export const Sidebar = ({ children }: SidebarProps) => {
                     {user?.name || "Anonymous"}
                   </span>
                   <span className="hidden md:block text-gray-500 text-[10px] mt-1 leading-none">
-                    Member
+                    {user?.isAdmin ? "Admin" : "Member"}
                   </span>
                 </div>
               )}
