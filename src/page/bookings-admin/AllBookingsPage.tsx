@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import {
   initialModalAlertState,
   type ModalAlertState,
@@ -6,20 +6,26 @@ import {
 import type { Booking } from "../../services/bookingService";
 import bookingService from "../../services/bookingService";
 import authService from "../../services/authService";
-import roomService, { type Room } from "../../services/roomService";
-import { BookingCard } from "../../components/BookingCard"; // adjust import path
+import roomService, {
+  type RoomType,
+  type Room,
+} from "../../services/roomService";
+import { BookingCard } from "../../components/BookingCard";
 import { Button, ModalAlert } from "../../components";
 import { useNavigate } from "react-router-dom";
 
 export const AllBookingsPage: React.FC = () => {
   const navigate = useNavigate();
+
   const [allBookings, setAllBookings] = useState<Booking[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [modal, setModal] = useState<ModalAlertState>(initialModalAlertState);
 
-  const [filterRoomName, setFilterRoomName] = useState("");
+  const [filterRoomId, setFilterRoomId] = useState("");
+  const [filterRoomTypeId, setFilterRoomTypeId] = useState("");
   const [filterMonth, setFilterMonth] = useState("");
   const [filterYear, setFilterYear] = useState("");
 
@@ -51,15 +57,25 @@ export const AllBookingsPage: React.FC = () => {
     });
   };
 
+  const buildParams = () => {
+    return {
+      room_id: filterRoomId || undefined,
+      room_type_id: filterRoomTypeId || undefined,
+      month: filterMonth ? Number(filterMonth) : undefined,
+      year: filterYear ? Number(filterYear) : undefined,
+    };
+  };
+
   const fetchAllBookings = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await bookingService.getAllBookings();
+      const params = buildParams();
+      const response = await bookingService.getAllBookings(params);
       setAllBookings(response.data);
     } catch (err) {
       console.error("Failed to fetch all bookings:", err);
-      setError("Failed to load all bookings. Please try again later.");
+      setError("Failed to load bookings. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -74,19 +90,40 @@ export const AllBookingsPage: React.FC = () => {
     }
   };
 
+  const fetchRoomTypes = async () => {
+    try {
+      const response = await roomService.getRoomTypes();
+      setRoomTypes(response.data);
+    } catch (err) {
+      console.error("Failed to fetch room types:", err);
+    }
+  };
+
   useEffect(() => {
     if (!isAdmin) {
       navigate("/", { replace: true });
       return;
     }
-    fetchAllBookings();
+
     fetchRooms();
+    fetchRoomTypes();
   }, [isAdmin, navigate]);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const timeout = setTimeout(() => {
+      fetchAllBookings();
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [filterRoomId, filterRoomTypeId, filterMonth, filterYear]);
 
   const handleCancelBooking = async (bookingId: string) => {
     try {
       await bookingService.cancelBooking(bookingId);
       showAlert("Success", "Booking cancelled successfully.");
+
       setAllBookings((prev) =>
         prev.map((b) =>
           b.booking_id === bookingId ? { ...b, status: "cancelled" } : b
@@ -94,7 +131,7 @@ export const AllBookingsPage: React.FC = () => {
       );
     } catch (err) {
       console.error("Failed to cancel booking:", err);
-      showAlert("Error", "Failed to cancel booking. Please try again.");
+      showAlert("Error", "Failed to cancel booking.");
     }
   };
 
@@ -107,55 +144,42 @@ export const AllBookingsPage: React.FC = () => {
     );
   };
 
-  const availableYears = useMemo(() => {
-    const years = new Set<string>();
-    allBookings.forEach((b) => {
-      if (b.date) years.add(new Date(b.date).getFullYear().toString());
-    });
-    return Array.from(years).sort();
-  }, [allBookings]);
-
-  const filteredBookings = useMemo(() => {
-    return allBookings.filter((b) => {
-      const roomName = typeof b.room === "string" ? b.room : b.room?.name ?? "";
-
-      if (filterRoomName && roomName !== filterRoomName) return false;
-
-      if (filterMonth || filterYear) {
-        if (!b.date) return false;
-        const date = new Date(b.date);
-        if (filterMonth && date.getMonth() + 1 !== Number(filterMonth))
-          return false;
-        if (filterYear && date.getFullYear() !== Number(filterYear))
-          return false;
-      }
-
-      return true;
-    });
-  }, [allBookings, filterRoomName, filterMonth, filterYear]);
-
   const handleResetFilters = () => {
-    setFilterRoomName("");
+    setFilterRoomId("");
     setFilterMonth("");
     setFilterYear("");
   };
 
-  const hasActiveFilters = filterRoomName || filterMonth || filterYear;
+  const hasActiveFilters = filterRoomId || filterMonth || filterYear;
 
   return (
     <div className="space-y-4">
       <Button variant="outline" onClick={() => navigate(-1)}>
         &larr; Back
       </Button>
+
       <div className="flex flex-wrap gap-2 items-end">
         <select
           className="border rounded px-2 py-1.5 text-sm"
-          value={filterRoomName}
-          onChange={(e) => setFilterRoomName(e.target.value)}
+          value={filterRoomId}
+          onChange={(e) => setFilterRoomId(e.target.value)}
         >
           <option value="">All Rooms</option>
           {rooms.map((r) => (
-            <option key={r.room_id} value={r.name}>
+            <option key={r.room_id} value={r.room_id}>
+              {r.name}
+            </option>
+          ))}
+        </select>
+
+        <select
+          className="border rounded px-2 py-1.5 text-sm"
+          value={filterRoomTypeId}
+          onChange={(e) => setFilterRoomTypeId(e.target.value)}
+        >
+          <option value="">All Room Types</option>
+          {roomTypes.map((r) => (
+            <option key={r.type_id} value={r.type_id}>
               {r.name}
             </option>
           ))}
@@ -169,23 +193,20 @@ export const AllBookingsPage: React.FC = () => {
           <option value="">All Months</option>
           {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
             <option key={m} value={m}>
-              {new Date(0, m - 1).toLocaleString("default", { month: "long" })}
+              {new Date(0, m - 1).toLocaleString("default", {
+                month: "long",
+              })}
             </option>
           ))}
         </select>
 
-        <select
-          className="border rounded px-2 py-1.5 text-sm"
+        <input
+          type="number"
+          placeholder="Year"
+          className="border rounded px-2 py-1.5 text-sm w-24"
           value={filterYear}
           onChange={(e) => setFilterYear(e.target.value)}
-        >
-          <option value="">All Years</option>
-          {availableYears.map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
-          ))}
-        </select>
+        />
 
         {hasActiveFilters && (
           <button
@@ -197,24 +218,21 @@ export const AllBookingsPage: React.FC = () => {
         )}
       </div>
 
-      {/* Results summary */}
       <p className="text-sm text-gray-500">
-        {filteredBookings.length} booking(s) found
+        {allBookings.length} booking(s) found
       </p>
 
-      {/* States */}
       {loading && <p className="text-gray-500">Loading bookings...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
-      {/* Booking Cards */}
       {!loading && !error && (
         <div className="space-y-3">
-          {filteredBookings.length === 0 ? (
+          {allBookings.length === 0 ? (
             <p className="text-gray-400 text-sm">
-              No bookings match the selected filters.
+              No bookings match the filters.
             </p>
           ) : (
-            filteredBookings.map((booking) => (
+            allBookings.map((booking) => (
               <BookingCard
                 key={booking.booking_id}
                 booking={booking}
