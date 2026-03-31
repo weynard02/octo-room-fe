@@ -10,6 +10,7 @@ import { AppointmentModal } from "../../components/AppointmentModal";
 import type AppointmentType from "../../types/Appointment";
 import authService from "../../services/authService";
 import { AdminHeader } from "../../components/AdminHeader";
+import { SkeletonGridHome } from "../../components/Skeleton";
 
 export interface RoomWithBookings extends Room {
   bookings: BookedSlot[];
@@ -51,25 +52,25 @@ export default function DashboardPage() {
             try {
               const bookedResponse = await roomService.getBookedSlots(
                 room.room_id,
-                selectedDate
+                selectedDate,
               );
               return {
                 ...room,
                 bookings: bookedResponse.data.booked_slots.filter(
-                  (slot) => slot.status?.toLowerCase() !== "cancelled"
+                  (slot) => slot.status?.toLowerCase() !== "cancelled",
                 ),
               };
             } catch (err) {
               console.error(
                 `Failed to fetch bookings for room ${room.room_id}:`,
-                err
+                err,
               );
               return {
                 ...room,
                 bookings: [],
               };
             }
-          })
+          }),
         );
 
         setRoomsWithBookings(roomsWithData);
@@ -115,9 +116,7 @@ export default function DashboardPage() {
       )}
 
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
+        <SkeletonGridHome />
       ) : error ? (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mt-6">
           {error}

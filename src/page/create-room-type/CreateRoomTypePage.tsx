@@ -1,13 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Input, ModalAlert } from "../../components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { CreateRoomType } from "../../services/roomService";
-import { initialModalAlertState, type ModalAlertState } from "../../types/ModalState";
+import {
+  initialModalAlertState,
+  type ModalAlertState,
+} from "../../types/ModalState";
 import roomService from "../../services/roomService";
+import { SkeletonCreateRoom } from "../../components/Skeleton";
 
 export default function CreateRoomTypePage() {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [form, setForm] = useState<CreateRoomType>({
     name: "",
@@ -21,15 +26,17 @@ export default function CreateRoomTypePage() {
       show: true,
       message,
       title,
-      onClose: () => navigate(0)
+      onClose: () => navigate(0),
     });
   };
 
-  const handleOnChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement
-    >
-  ) => {
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 400);
+  }, []);
+
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
@@ -45,59 +52,62 @@ export default function CreateRoomTypePage() {
       try {
         await roomService.createRoomType({
           name: form.name,
-          capacity: form.capacity
+          capacity: form.capacity,
         });
         showModal("Successful", "New room type successfully created.");
       } catch (error) {
-        showModal("Failed", "Failed created new room type.")
+        showModal("Failed", "Failed created new room type.");
       } finally {
         setSubmitting(false);
       }
     }
-  }
+  };
 
   return (
     <>
+      {isLoading ? (
+        <SkeletonCreateRoom />
+      ) : (
+        <Card
+          title="Create A Room Type"
+          description="Please fill out the form below to create a new room type."
+        >
+          <form>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-6 gap-y-6">
+                <Input
+                  id="room_type"
+                  name="name"
+                  label="Type Name"
+                  type="text"
+                  value={form.name}
+                  placeholder="Ex. rt1"
+                  onChange={handleOnChange}
+                  className="col-span-4"
+                />
 
-      <Card
-        title="Create A Room Type"
-        description="Please fill out the form below to create a new room type."
-      >
-        <form>
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-6 gap-y-6">
-              <Input
-                id="room_type"
-                name="name"
-                label="Type Name"
-                type="text"
-                value={form.name}
-                placeholder="Ex. rt1"
-                onChange={handleOnChange}
-                className="col-span-4"
-              />
-
-              <Input
-                id="room_capacity"
-                name="capacity"
-                label="Room Capacity"
-                type="number"
-                value={form.capacity}
-                placeholder="Ex. 1"
-                onChange={handleOnChange}
-                className="col-span-4"
-              />
+                <Input
+                  id="room_capacity"
+                  name="capacity"
+                  label="Room Capacity"
+                  type="number"
+                  value={form.capacity}
+                  placeholder="Ex. 1"
+                  onChange={handleOnChange}
+                  className="col-span-4"
+                />
+              </div>
+              <Button
+                className="bg-red-600 hover:bg-red-700 duration-200"
+                onClick={() => handleSubmit()}
+                disabled={submitting}
+              >
+                {submitting ? "Creating room..." : "Create Room Type"}
+              </Button>
             </div>
-            <Button
-              className="bg-red-600 hover:bg-red-700 duration-200"
-              onClick={() => handleSubmit()}
-              disabled={submitting}
-            >
-              {submitting ? "Creating room..." : "Create Room Type"}
-            </Button>
-          </div>
-        </form>
-      </Card>
+          </form>
+        </Card>
+      )}
 
       {modal.show && (
         <ModalAlert
@@ -107,5 +117,5 @@ export default function CreateRoomTypePage() {
         />
       )}
     </>
-  )
+  );
 }
