@@ -17,13 +17,13 @@ import {
 } from "../../utils/dashboardSummary";
 import ChartDoughnuts from "../../components/DoughnutCharts";
 import { useNavigate } from "react-router-dom";
-import SkeletonAdminDashboard from "../../components/Skeleton";
+import { SkeletonAdminDashboard } from "../../components/Skeleton";
 
 export default function DashboarAdminPage() {
   const [dataBooking, setDataBooking] = useState<Booking[]>([]);
   const navigate = useNavigate();
   const user = authService.getUser();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchingData = async () => {

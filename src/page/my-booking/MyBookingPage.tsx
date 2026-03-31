@@ -9,10 +9,11 @@ import {
 import authService from "../../services/authService";
 import { AdminHeader } from "../../components/AdminHeader";
 import { BookingCard } from "../../components/BookingCard";
+import { SkeletonListBooking } from "../../components/Skeleton";
 
 export const MyBookingPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(
-    formatDateKey(new Date())
+    formatDateKey(new Date()),
   );
   const [allBookings, setAllBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +35,7 @@ export const MyBookingPage: React.FC = () => {
     title: string,
     message: string,
     confirmLabel: string,
-    onConfirm: () => void
+    onConfirm: () => void,
   ) => {
     setModal({
       show: true,
@@ -88,8 +89,8 @@ export const MyBookingPage: React.FC = () => {
       showAlert("Success", "Booking cancelled successfully.");
       setAllBookings((prev) =>
         prev.map((b) =>
-          b.booking_id === bookingId ? { ...b, status: "cancelled" } : b
-        )
+          b.booking_id === bookingId ? { ...b, status: "cancelled" } : b,
+        ),
       );
     } catch (err) {
       console.error("Failed to cancel booking:", err);
@@ -102,7 +103,7 @@ export const MyBookingPage: React.FC = () => {
       "Cancel Booking",
       `Are you sure you want to cancel this booking?`,
       "Cancel Booking",
-      () => handleCancelBooking(booking.booking_id)
+      () => handleCancelBooking(booking.booking_id),
     );
   };
 
@@ -129,9 +130,7 @@ export const MyBookingPage: React.FC = () => {
         />
       )}
       {loading ? (
-        <div className="flex justify-center p-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        </div>
+        <SkeletonListBooking />
       ) : error ? (
         <Card className="p-8 text-center text-red-600">
           <p>{error}</p>

@@ -59,7 +59,7 @@ const authService = {
   register: async (data: RegisterRequest): Promise<ApiResponse<AuthData>> => {
     const response = await api.post<ApiResponse<AuthData>>(
       "/auth/register",
-      data
+      data,
     );
 
     const body = response.data;
